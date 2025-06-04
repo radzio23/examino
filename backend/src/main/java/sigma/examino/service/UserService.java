@@ -56,7 +56,7 @@ public class UserService {
      * - True, jak hasło sie zgadza, inaczej false.
      *
      * @param username nazwa użytkownika
-     * @param password hasło w postaci
+     * @param password hasło w postaci zahasowanej
      * @return true/false
      */
     public boolean loginUser(String username, String password) {

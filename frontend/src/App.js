@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
 
 function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('http://localhost:8080/api/hello')  // To endpoint, który musisz stworzyć w backendzie
-      .then(res => res.text())
-      .then(text => setMessage(text));
-  }, []);
-
   return (
-    <div>
-      <h1>Examino</h1>
-      <p>Backend mówi: {message}</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

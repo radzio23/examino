@@ -27,7 +27,7 @@ public class UserController {
      * Endpoint do rejestracji nowego użytkownika.
      * Potrzebuje on user, password i role
      *
-     * @param body mapa z danymi w fromacie username, password, role
+     * @param body mapa z danymi w formacie username, password, role
      * @return odpowiedz z potwierdzeniem lub info o bledzie
      */
     @PostMapping("/register")
@@ -75,7 +75,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Brakuje danych");
         }
 
-        // Sprawdzamy login oraz haasło, czy są poprawne.
+        // Sprawdzamy login oraz hasło, czy są poprawne.
         boolean loggedIn = userService.loginUser(username, password);
         if (loggedIn) {
             return ResponseEntity.ok("Zalogowano pomyślnie");
