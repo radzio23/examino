@@ -1,0 +1,26 @@
+.menu{
+  display: flex;
+  background-color: #c2c4bf;
+  align-items: center;
+  justify-content: flex-end;
+  border-collapse: collapse;
+  
+  :first-child{
+    margin-right: auto;
+  }
+  
+  a{
+    display: flex;
+    height: 48px;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    
+    h1{
+      float: left;
+      margin: 0;
+      font-size: 32px;
+    }
+  }
+}
