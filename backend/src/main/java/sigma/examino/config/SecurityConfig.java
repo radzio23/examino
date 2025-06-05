@@ -43,45 +43,47 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Wyłącz CSRF (dla API REST nie jest potrzebne)
-            .csrf(AbstractHttpConfigurer::disable)
-            
-            // Konfiguracja CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // Zezwól na dostęp do endpointów bez autentykacji
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/exams").permitAll()
-                .anyRequest().authenticated()
-            );
-            
+                // Wyłącz CSRF (dla API REST nie jest potrzebne)
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // Konfiguracja CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // Zezwól na dostęp do endpointów bez autentykacji
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/exams/**").permitAll()
+                        .requestMatchers("/api/questions/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // Zezwól na żądania z frontendu (React na 3000)
         configuration.setAllowedOrigins(List.of(
-            "http://localhost:3000"
+                "http://localhost:3000"
         ));
-        
+
         // Zezwól na metody HTTP
         configuration.setAllowedMethods(List.of(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
         ));
-        
+
         // Zezwól na nagłówki
         configuration.setAllowedHeaders(List.of(
-            "Authorization", "Content-Type", "Accept"
+                "Authorization", "Content-Type", "Accept"
         ));
-        
+
         // Zezwól na przesyłanie ciasteczek (jeśli używasz sesji)
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

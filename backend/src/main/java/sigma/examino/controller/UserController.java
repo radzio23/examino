@@ -3,32 +3,32 @@ package sigma.examino.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Role;
+import sigma.examino.model.User;
 import sigma.examino.service.UserService;
 
 import java.util.Map;
 
 /**
- * Kontroler obsługujący endpointy związane z autoryzacją użytkowników, naszą rejestrację i logowanie.
+ * Kontroler obsługujący endpointy związane z autoryzacją użytkowników,
+ * czyli rejestrację i logowanie.
  */
 @RestController
-@RequestMapping("/api/auth")  // Bazowy URL dla tego kontrolera to /api/auth
+@RequestMapping("/api/auth")
 public class UserController {
 
     private final UserService userService;
 
-    /**
-     * Konstruktor
-     */
+    // Konstruktor - wstrzykiwanie serwisu UserService
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * Endpoint do rejestracji nowego użytkownika.
-     * Potrzebuje on user, password i role
-     *
-     * @param body mapa z danymi w formacie username, password, role
-     * @return odpowiedz z potwierdzeniem lub info o bledzie
+     * Endpoint POST /api/auth/register - rejestracja nowego użytkownika.
+     * Oczekuje JSON z polami: username, password, role.
+     * Sprawdza, czy podane dane są kompletne i czy rola jest poprawna.
+     * Rejestruje użytkownika za pomocą serwisu.
+     * Zwraca odpowiedź 200 OK z komunikatem sukcesu lub 400 z błędem.
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
@@ -36,51 +36,66 @@ public class UserController {
         String password = body.get("password");
         String roleStr = body.get("role");
 
-        // Sprawdzamy, czy wszytskie dane przesłalismy
+        // Sprawdzenie czy dane są obecne
         if (username == null || password == null || roleStr == null) {
-            return ResponseEntity.badRequest().body("Brakuje danych");
+            return ResponseEntity.badRequest().body(Map.of("error", "Brakuje danych"));
         }
 
-        // parsowanie naszej roli
         Role role;
         try {
+            // Konwersja tekstu na enum Role, z uwzględnieniem wielkości liter
             role = Role.valueOf(roleStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Niepoprawna rola");
+            // Niepoprawna rola w zapytaniu
+            return ResponseEntity.badRequest().body(Map.of("error", "Niepoprawna rola"));
         }
 
-        // Rejestracja naszego uzytkownika, jak istnieje to mamy błąd.
         try {
+            // Próba rejestracji użytkownika
             userService.registerUser(username, password, role);
-            return ResponseEntity.ok("Użytkownik zarejestrowany");
+            return ResponseEntity.ok(Map.of("message", "Użytkownik zarejestrowany"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            // Jeśli użytkownik o takim username już istnieje lub inny błąd
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     /**
-     * Endpoint do logowania użytkownika.
-     * Oczekujemy pól username, password.
-     *
-     * @param body mapa z danymi username, password
-     * @return odpowiedz czy sie udało czy też nie.
+     * Endpoint POST /api/auth/login - logowanie użytkownika.
+     * Oczekuje JSON z polami: username i password.
+     * Sprawdza poprawność danych, a jeśli dane się zgadzają,
+     * zwraca nazwę użytkownika i jego rolę w odpowiedzi.
+     * W przeciwnym razie zwraca 401 Unauthorized.
      */
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> body) {
         String username = body.get("username");
         String password = body.get("password");
 
-        // Sprawdzamy czy mamy wszytskie dane.
+        // Sprawdzenie czy dane są obecne
         if (username == null || password == null) {
-            return ResponseEntity.badRequest().body("Brakuje danych");
+            return ResponseEntity.badRequest().body(Map.of("error", "Brakuje danych"));
         }
 
-        // Sprawdzamy login oraz hasło, czy są poprawne.
-        boolean loggedIn = userService.loginUser(username, password);
-        if (loggedIn) {
-            return ResponseEntity.ok("Zalogowano pomyślnie");
+        // Próba zalogowania użytkownika
+        User user = userService.loginUserReturnUser(username, password);
+        if (user != null) {
+            // Zwróć dane użytkownika (np. dla frontendu do rozróżnienia roli)
+            return ResponseEntity.ok(Map.of(
+                "username", user.getUsername(),
+                "role", user.getRole().toString()
+            ));
         } else {
-            return ResponseEntity.status(401).body("Niepoprawny login lub hasło");
+            // Błędne dane logowania
+            return ResponseEntity.status(401).body(Map.of("error", "Niepoprawny login lub hasło"));
         }
     }
+
+    @GetMapping("/students")
+    public ResponseEntity<?> getAllStudents() {
+        return ResponseEntity.ok(
+            userService.findAllByRole(Role.STUDENT)
+        );
+    }
+
 }
