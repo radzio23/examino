@@ -1,28 +1,62 @@
 .menu {
   display: flex;
-  background-color: #c2c4bf;
   align-items: center;
-  justify-content: flex-end;
-  border-collapse: collapse;
+  background-color: #f0f4f8; 
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  :first-child {
-    margin-right: auto;
-  }
+/* Pierwszy link - logo + nazwa po lewej */
+.menu a:first-child {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #1a73e8; /* niebieski */
+}
 
-  a {
-    display: flex;
-    height: 48px;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid black;
-    border-radius: 5px;
-    text-decoration: none; // Usuwa podkreślenie
+.menu a:first-child img {
+  height: 40px;
+  margin-right: 10px;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.1));
+}
 
-    h1 {
-      float: left;
-      margin: 0;
-      font-size: 32px;
-      color:  #0000FF; // 
-    }
-  }
+.menu a:first-child h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Linki po prawej */
+.menu a {
+  text-decoration: none;
+  color: #333;
+  padding: 10px 16px;
+  margin-left: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 18px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+/* Zmiana kolorow */
+.menu a:hover {
+  background-color: #1a73e8;
+  color: white;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.4);
+}
+
+/* Aktywny link */
+.menu a.active {
+  background-color: #155ab6;
+  color: white;
+}
+
+/* Dla nagłówków w linkach */
+.menu a h1 {
+  margin: 0;
+  font-size: 20px;
 }

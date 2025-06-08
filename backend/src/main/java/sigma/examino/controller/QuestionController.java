@@ -1,11 +1,12 @@
 package sigma.examino.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Question;
 import sigma.examino.repository.QuestionRepository;
-
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,31 +62,40 @@ public class QuestionController {
         return questionRepository.save(question);
     }
 
+    //===========0506==============
     /**
      * Edycja pytania w bazie.
      *
      * @param id id z URL-a
-     * @param updatedExam pytanie (konwersja z JSON)
+     * @param updatedQuestion pytanie (konwersja z JSON)
      * @return informacja o wyniku edycji lub wyjątek
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Question> updateQuestion(@PathVariable UUID id, @RequestBody Question updatedQuestion) {
+    public ResponseEntity<Question> updateQuestion(@PathVariable UUID id, @Valid @RequestBody Question updatedQuestion) {
         return questionRepository.findById(id)
-                .map(q -> {
-                    q.setContent(updatedQuestion.getContent());
-                    q.setExam(updatedQuestion.getExam());
-                    return ResponseEntity.ok(questionRepository.save(q));
+                .map(existingQuestion -> {
+                    existingQuestion.setContent(updatedQuestion.getContent());
+                    existingQuestion.setExam(updatedQuestion.getExam());
+                    existingQuestion.setAnswers(updatedQuestion.getAnswers()); // jeśli masz listę odpowiedzi
+                    existingQuestion.setCorrectAnswer(updatedQuestion.getCorrectAnswer()); // jeśli masz pole poprawnej odpowiedzi
+                    Question saved = questionRepository.save(existingQuestion);
+                    return ResponseEntity.ok(saved);
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /**
      * Usuwanie pytania w bazy.
      *
      * @param id id z URL-a
+     * @return odpowiedź 204 lub 404 gdy pytanie nie istnieje
      */
     @DeleteMapping("/{id}")
-    public void deleteQuestion(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteQuestion(@PathVariable UUID id) {
+        if (!questionRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         questionRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

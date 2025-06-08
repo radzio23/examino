@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import "../css/Login.css";
 export default function Login() {
   // Stan przechowujący nazwę użytkownika
   const [username, setUsername] = useState("");

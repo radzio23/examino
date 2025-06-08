@@ -1,0 +1,50 @@
+.exam {
+  max-width: 800px;
+  margin: 30px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0 20px;
+}
+
+.exam-list h2 {
+  color: #1a73e8;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.exam-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+.exam-list li {
+  background-color: #f0f4f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.exam-list li:hover {
+  background-color: #e1e8ff;
+  cursor: pointer;
+}
+
+.exam-list button {
+  background-color: #1a73e8;
+  color: white;
+  font-size: 18px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.exam-list button:hover {
+  background-color: #155ab6;
+}

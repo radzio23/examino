@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Users from './pages/Users';
-
+import ExamNew from './pages/ExamNew';
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +21,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/exams" element={<Exam />} />
         <Route path="/users" element={<Users />} />
+        {/*strona do tworzenia egzaminu */}
+        <Route path="/exams/new" element={<ExamNew />} />
       </Routes>
     </BrowserRouter>
   );
