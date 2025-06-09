@@ -17,7 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Twoje istniejące strony */}
+        {/*istniejące strony */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/exams" element={<Exam />} />
         <Route path="/users" element={<Users />} />

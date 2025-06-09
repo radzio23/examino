@@ -1,33 +1,55 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../css/Login.css";
+
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("STUDENT");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const response = await fetch("http://localhost:8080/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, role }),
-    });
+    // Walidacja danych
+    if (!username.trim() || !password.trim()) {
+      setError("Nazwa użytkownika i hasło nie mogą być puste");
+      return;
+    }
 
-    if (response.ok) {
-      alert("Zarejestrowano pomyślnie. Możesz się zalogować.");
-      navigate("/login");
-    } else {
-      const error = await response.text();
-      alert("Błąd: " + error);
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          username: username.trim(), 
+          password: password.trim()
+        }),
+      });
+
+      // Dodatkowe logowanie dla debugowania
+      console.log("Request payload:", { username: username.trim(), password: password.trim() });
+      
+      if (response.ok) {
+        alert("Zarejestrowano pomyślnie. Możesz się zalogować.");
+        navigate("/login");
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || "Nieznany błąd serwera");
+        console.error("Backend error:", errorData);
+      }
+    } catch (err) {
+      setError("Problem z połączeniem sieciowym");
+      console.error("Network error:", err);
     }
   };
 
   return (
     <div className="auth-form">
       <h2>Rejestracja</h2>
+      {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -43,10 +65,6 @@ export default function Register() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="STUDENT">Student</option>
-          <option value="ADMIN">Administrator</option>
-        </select>
         <button type="submit">Zarejestruj się</button>
       </form>
       <p>

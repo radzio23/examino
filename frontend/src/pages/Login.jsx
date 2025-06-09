@@ -11,25 +11,23 @@ export default function Login() {
 
   // Funkcja obsługująca przesłanie formularza logowania
   const handleSubmit = async (e) => {
-    e.preventDefault(); // zapobiega domyślnemu przeładowaniu strony
+    e.preventDefault();
 
-    // Wysyłamy zapytanie POST do backendu z danymi logowania
     const response = await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }), // wysyłamy nazwę i hasło jako JSON
+      body: JSON.stringify({ username, password }),
     });
 
     if (response.ok) {
-      // Jeśli odpowiedź jest OK, pobieramy dane (username i role) z odpowiedzi JSON
       const data = await response.json();
-      // Przekierowujemy do /dashboard, przekazując rolę użytkownika w stanie nawigacji
+      localStorage.setItem("token", data.token); 
       navigate("/dashboard", { state: { role: data.role } });
     } else {
-      // Jeśli logowanie nie powiodło się, wyświetlamy alert z komunikatem
       alert("Niepoprawny login lub hasło");
     }
   };
+
 
   return (
     <div className="auth-form">

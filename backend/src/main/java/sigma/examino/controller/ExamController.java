@@ -1,8 +1,10 @@
 package sigma.examino.controller;
-import jakarta.validation.Valid; 
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Exam;
 import sigma.examino.repository.ExamRepository;
@@ -11,39 +13,56 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Kontroler obsługujący endpointy związane z egzaminami - dodawaniem, usuwaniem, edytowaniem i wyświetlaniem.
+ * Kontroler REST do zarządzania egzaminami.
+ * <p>
+ * Obsługuje operacje CRUD (tworzenie, pobieranie, edycję i usuwanie egzaminów).
+ * Zabezpieczony adnotacjami Spring Security.
+ * </p>
+ *
+ * @author OpenAI
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/exams")
 public class ExamController {
+
     @Autowired
     private ExamRepository examRepository;
 
     /**
-     * Zwraca listę wszystkich egzaminów.
+     * Zwraca listę wszystkich egzaminów dostępnych w systemie.
      *
      * @return lista egzaminów
      */
-    @GetMapping // odpowiada na GET /api/exams
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<Exam> getAllExams() {
         return examRepository.findAll();
     }
 
     /**
-     * Zwraca egzamin o podanym id.
+     * Pobiera egzamin na podstawie identyfikatora.
      *
-     * @param id id z URL-a
-     * @return egzamin o danym id lub wyjątek
+     * @param id identyfikator egzaminu (UUID)
+     * @return obiekt egzaminu
+     * @throws RuntimeException jeśli egzamin nie zostanie znaleziony
      */
     @GetMapping("/{id}")
-    public Exam getExamById(@PathVariable UUID id){
+    @PreAuthorize("isAuthenticated()")
+    public Exam getExamById(@PathVariable UUID id) {
         return examRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
     }
-    //===0806=======
+
+    /**
+     * Tworzy nowy egzamin. Dostępne tylko dla użytkowników z rolą ADMIN.
+     *
+     * @param exam obiekt egzaminu przesłany w treści żądania
+     * @return nowo utworzony egzamin
+     */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Exam> createExam(@Valid @RequestBody Exam exam) {
-        // Powiąż pytania z egzaminem
         if (exam.getQuestionsList() != null) {
             exam.getQuestionsList().forEach(question -> question.setExam(exam));
         }
@@ -51,36 +70,33 @@ public class ExamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedExam);
     }
 
-
-
-        //TO  DODAJE 0506
     /**
-     * Edycja egzaminu w bazie z walidacją.
+     * Aktualizuje istniejący egzamin. Dostępne tylko dla ADMIN.
      *
-     * @param id id z URL-a
-     * @param updatedExam egzamin (konwersja z JSON)
-     * @return HTTP 200 OK z zaktualizowanym egzaminem lub 404 jeśli nie znaleziono
+     * @param id identyfikator egzaminu do aktualizacji
+     * @param updatedExam zaktualizowane dane egzaminu
+     * @return zaktualizowany egzamin lub 404 jeśli nie znaleziono
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Exam> updateExam(@PathVariable UUID id, @Valid @RequestBody Exam updatedExam) {
         return examRepository.findById(id).map(exam -> {
-                    exam.setName(updatedExam.getName());
-                    exam.setDurationMinutes(updatedExam.getDurationMinutes());
-                    exam.setSubject(updatedExam.getSubject());
-                    // Lepiej nie ustawiać tutaj listy pytań, bo pytania usuwamy osobmno
-                    // exam.setQuestionsList(updatedExam.getQuestionsList());
-                    Exam saved = examRepository.save(exam);
-                    return ResponseEntity.ok(saved);
-                }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            exam.setName(updatedExam.getName());
+            exam.setDurationMinutes(updatedExam.getDurationMinutes());
+            exam.setSubject(updatedExam.getSubject());
+            Exam saved = examRepository.save(exam);
+            return ResponseEntity.ok(saved);
+        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /**
-     * Usuwanie egzaminu z bazy.
+     * Usuwa egzamin na podstawie identyfikatora. Tylko ADMIN.
      *
-     * @param id id z URL-a
-     * @return HTTP 204 No Content jeśli usunięto, 404 jeśli nie znaleziono
+     * @param id identyfikator egzaminu do usunięcia
+     * @return 204 No Content jeśli sukces, 404 jeśli nie znaleziono
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteExam(@PathVariable UUID id) {
         if (!examRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -88,5 +104,4 @@ public class ExamController {
         examRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
 }

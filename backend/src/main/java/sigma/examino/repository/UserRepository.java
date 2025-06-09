@@ -34,4 +34,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * @return lista użytkowników o podanej roli
      */
     List<User> findAllByRole(Role role);
+
+    /**
+     * Sprawdza, czy istnieje co najmniej jeden użytkownik o danej roli.
+     *
+     * @param role rola do sprawdzenia
+     * @return true, jeśli istnieje użytkownik z daną rolą, w przeciwnym razie false
+     */
+    boolean existsByRole(Role role);
 }
+

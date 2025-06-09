@@ -4,13 +4,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Role;
 import sigma.examino.model.User;
+import sigma.examino.security.JwtUtils;
 import sigma.examino.service.UserService;
 
 import java.util.Map;
 
 /**
  * Kontroler obsługujący endpointy związane z autoryzacją użytkowników,
- * czyli rejestrację i logowanie.
+ * takie jak rejestracja, logowanie oraz pobieranie listy studentów.
+ *
+ * <p>Obsługuje ścieżki rozpoczynające się od <code>/api/auth</code>.</p>
+ *
+ * @author OpenAI
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -18,84 +24,75 @@ public class UserController {
 
     private final UserService userService;
 
-    // Konstruktor - wstrzykiwanie serwisu UserService
+    /**
+     * Konstruktor wstrzykujący serwis użytkownika.
+     *
+     * @param userService serwis użytkownika
+     */
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * Endpoint POST /api/auth/register - rejestracja nowego użytkownika.
-     * Oczekuje JSON z polami: username, password, role.
-     * Sprawdza, czy podane dane są kompletne i czy rola jest poprawna.
-     * Rejestruje użytkownika za pomocą serwisu.
-     * Zwraca odpowiedź 200 OK z komunikatem sukcesu lub 400 z błędem.
+     * Endpoint <code>POST /api/auth/register</code> – rejestracja nowego użytkownika.
+     * <p>Oczekuje mapy JSON zawierającej klucze <code>username</code> i <code>password</code>.</p>
+     * <p>Nowemu użytkownikowi zawsze przypisywana jest rola STUDENT.</p>
+     *
+     * @param body mapa zawierająca dane rejestracyjne (username, password)
+     * @return odpowiedź HTTP 200 po pomyślnej rejestracji lub 400 w przypadku błędu
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
         String username = body.get("username");
         String password = body.get("password");
-        String roleStr = body.get("role");
 
-        // Sprawdzenie czy dane są obecne
-        if (username == null || password == null || roleStr == null) {
+        if (username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Brakuje danych"));
         }
 
-        Role role;
-        try {
-            // Konwersja tekstu na enum Role, z uwzględnieniem wielkości liter
-            role = Role.valueOf(roleStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            // Niepoprawna rola w zapytaniu
-            return ResponseEntity.badRequest().body(Map.of("error", "Niepoprawna rola"));
-        }
+        Role role = Role.STUDENT;
 
         try {
-            // Próba rejestracji użytkownika
             userService.registerUser(username, password, role);
             return ResponseEntity.ok(Map.of("message", "Użytkownik zarejestrowany"));
         } catch (RuntimeException e) {
-            // Jeśli użytkownik o takim username już istnieje lub inny błąd
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     /**
-     * Endpoint POST /api/auth/login - logowanie użytkownika.
-     * Oczekuje JSON z polami: username i password.
-     * Sprawdza poprawność danych, a jeśli dane się zgadzają,
-     * zwraca nazwę użytkownika i jego rolę w odpowiedzi.
-     * W przeciwnym razie zwraca 401 Unauthorized.
+     * Endpoint <code>POST /api/auth/login</code> – logowanie użytkownika.
+     * <p>Oczekuje mapy JSON zawierającej <code>username</code> i <code>password</code>.</p>
+     * <p>Po pomyślnym logowaniu zwraca token JWT.</p>
+     *
+     * @param body mapa zawierająca dane logowania
+     * @return odpowiedź HTTP 200 z tokenem lub 401 przy błędnych danych
      */
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> body) {
         String username = body.get("username");
         String password = body.get("password");
 
-        // Sprawdzenie czy dane są obecne
         if (username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Brakuje danych"));
         }
 
-        // Próba zalogowania użytkownika
         User user = userService.loginUserReturnUser(username, password);
         if (user != null) {
-            // Zwróć dane użytkownika (np. dla frontendu do rozróżnienia roli)
-            return ResponseEntity.ok(Map.of(
-                "username", user.getUsername(),
-                "role", user.getRole().toString()
-            ));
+            String token = JwtUtils.generateToken(user.getUsername(), user.getRole().toString());
+            return ResponseEntity.ok(Map.of("token", token));
         } else {
-            // Błędne dane logowania
             return ResponseEntity.status(401).body(Map.of("error", "Niepoprawny login lub hasło"));
         }
     }
 
+    /**
+     * Endpoint <code>GET /api/auth/students</code> – pobiera listę wszystkich użytkowników z rolą STUDENT.
+     *
+     * @return lista studentów w odpowiedzi HTTP 200
+     */
     @GetMapping("/students")
     public ResponseEntity<?> getAllStudents() {
-        return ResponseEntity.ok(
-            userService.findAllByRole(Role.STUDENT)
-        );
+        return ResponseEntity.ok(userService.findAllByRole(Role.STUDENT));
     }
-
 }

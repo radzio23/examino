@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -43,11 +44,7 @@ export default function ExamForm({ onClose, onSaved }) {
       ...prev,
       questionsList: [
         ...prev.questionsList,
-        {
-          content: '',
-          answers: ['', '', '', ''],
-          correctAnswerIndex: 0,
-        },
+        { content: '', answers: ['', '', '', ''], correctAnswerIndex: 0 },
       ],
     }));
   };
@@ -58,37 +55,44 @@ export default function ExamForm({ onClose, onSaved }) {
     setExam({ ...exam, questionsList: updated });
   };
 
-  const handleSubmit = async () => {
-    console.log("Kliknięto Zapisz");
+const handleSubmit = async () => {
+  
 
-    // Pobierz token JWT z localStorage (zakładam, że tak go przechowujesz)
-    const token = localStorage.getItem("token");
+  console.log("Kliknięto Zapisz");
+  const token = localStorage.getItem("token");
+  console.log("Token z localStorage:", token);
 
-    if (!token) {
-      alert("Musisz być zalogowany jako admin, aby dodać egzamin!");
-      return;
-    }
+  if (!token) {
+    alert("Musisz być zalogowany jako admin, aby dodać egzamin!");
+    return;
+  }
 
-    try {
-      const response = await axios.post('http://localhost:8080/api/exams', exam, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      console.log('Zapisano egzamin', response.data);
-      if (onSaved) onSaved();
-    } catch (err) {
-      console.error('Błąd przy zapisie egzaminu', err.response ? err.response.data : err.message);
-      if (err.response && err.response.status === 403) {
+  try {
+    const response = await axios.post('http://localhost:8080/api/exams', exam, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('Zapisano egzamin', response.data);
+    if (onSaved) onSaved();
+  } catch (err) {
+    if (err.response) {
+      console.error("Błąd odpowiedzi z serwera:", err.response.status, err.response.data);
+      if (err.response.status === 403) {
         alert("Brak uprawnień. Zaloguj się jako admin.");
       } else {
-        alert("Błąd podczas zapisywania egzaminu.");
+        alert("Błąd podczas zapisywania egzaminu: " + JSON.stringify(err.response.data));
       }
+    } else {
+      console.error("Błąd zapytania:", err.message);
+      alert("Błąd podczas zapisywania egzaminu.");
     }
-  };
+  }
+};
+
 
   const handleCancel = () => {
-    if (onClose) onClose(); // tylko zamyka formularz
+    if (onClose) onClose();
   };
 
   return (
@@ -99,7 +103,7 @@ export default function ExamForm({ onClose, onSaved }) {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#f0f4f8",
-        padding: "20px"
+        padding: "20px",
       }}
     >
       <div
@@ -156,7 +160,7 @@ export default function ExamForm({ onClose, onSaved }) {
                   border: "none",
                   color: "red",
                   cursor: "pointer",
-                  fontSize: "14px"
+                  fontSize: "14px",
                 }}
               >
                 Usuń
@@ -189,24 +193,15 @@ export default function ExamForm({ onClose, onSaved }) {
           </div>
         ))}
 
-        <button
-          onClick={addQuestion}
-          style={blueButton}
-        >
+        <button onClick={addQuestion} style={blueButton}>
           Dodaj pytanie
         </button>
 
         <br />
-        <button
-          onClick={handleSubmit}
-          style={greenButton}
-        >
+        <button onClick={handleSubmit} style={greenButton}>
           Zapisz
         </button>
-        <button
-          onClick={handleCancel}
-          style={grayButton}
-        >
+        <button onClick={handleCancel} style={grayButton}>
           Anuluj
         </button>
       </div>
@@ -220,7 +215,7 @@ const inputStyle = {
   padding: "10px",
   marginBottom: "15px",
   borderRadius: "4px",
-  border: "1px solid #ccc"
+  border: "1px solid #ccc",
 };
 
 const blueButton = {
@@ -230,7 +225,7 @@ const blueButton = {
   border: "none",
   borderRadius: "4px",
   cursor: "pointer",
-  marginBottom: "20px"
+  marginBottom: "20px",
 };
 
 const greenButton = {
@@ -240,12 +235,12 @@ const greenButton = {
   border: "none",
   borderRadius: "4px",
   cursor: "pointer",
-  marginRight: "10px"
+  marginRight: "10px",
 };
 
 const grayButton = {
   padding: "10px 20px",
   borderRadius: "4px",
   border: "1px solid #ccc",
-  cursor: "pointer"
+  cursor: "pointer",
 };
