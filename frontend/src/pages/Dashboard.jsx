@@ -1,10 +1,14 @@
-import { useLocation } from "react-router-dom";
-import Menu from "./Menu";          // menu dla ADMIN
-import StudentMenu from "./StudentMenu";  // menu dla STUDENT 
+import { useState, useEffect } from "react";
+import Menu from "./Menu";
+import StudentMenu from "./StudentMenu";
 
 export default function Dashboard() {
-  const location = useLocation();
-  const role = location.state?.role || "STUDENT"; // jeśli brak roli, to domyślnie STUDENT
+  const [role, setRole] = useState(localStorage.getItem("role") || "STUDENT");
+
+  useEffect(() => {
+    setRole(localStorage.getItem("role") || "STUDENT");
+    console.log("Aktualna rola w Dashboard:", localStorage.getItem("role"));
+  }, []);
 
   return (
     <div>

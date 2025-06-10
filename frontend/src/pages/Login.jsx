@@ -21,8 +21,9 @@ export default function Login() {
 
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem("token", data.token); 
-      navigate("/dashboard", { state: { role: data.role } });
+    localStorage.setItem("token", data.token); 
+    localStorage.setItem("role", data.role);     //zapisujemy role
+    navigate("/dashboard");
     } else {
       alert("Niepoprawny login lub hasło");
     }

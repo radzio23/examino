@@ -12,16 +12,6 @@ import sigma.examino.repository.ExamRepository;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Kontroler REST do zarządzania egzaminami.
- * <p>
- * Obsługuje operacje CRUD (tworzenie, pobieranie, edycję i usuwanie egzaminów).
- * Zabezpieczony adnotacjami Spring Security.
- * </p>
- *
- * @author OpenAI
- * @version 1.0
- */
 @RestController
 @RequestMapping("/api/exams")
 public class ExamController {
@@ -30,9 +20,7 @@ public class ExamController {
     private ExamRepository examRepository;
 
     /**
-     * Zwraca listę wszystkich egzaminów dostępnych w systemie.
-     *
-     * @return lista egzaminów
+     * Zwraca listę wszystkich egzaminów (widoczne dla zalogowanych użytkowników).
      */
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -41,11 +29,7 @@ public class ExamController {
     }
 
     /**
-     * Pobiera egzamin na podstawie identyfikatora.
-     *
-     * @param id identyfikator egzaminu (UUID)
-     * @return obiekt egzaminu
-     * @throws RuntimeException jeśli egzamin nie zostanie znaleziony
+     * Zwraca konkretny egzamin (widoczny dla zalogowanych).
      */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -54,13 +38,13 @@ public class ExamController {
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
     }
 
+
+    //============TU COS SIE PSUJE============
     /**
-     * Tworzy nowy egzamin. Dostępne tylko dla użytkowników z rolą ADMIN.
-     *
-     * @param exam obiekt egzaminu przesłany w treści żądania
-     * @return nowo utworzony egzamin
+     * Tworzy egzamin – tylko ADMIN.
      */
     @PostMapping
+    //@PreAuthorize("isAuthenticated()")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Exam> createExam(@Valid @RequestBody Exam exam) {
         if (exam.getQuestionsList() != null) {
@@ -71,11 +55,7 @@ public class ExamController {
     }
 
     /**
-     * Aktualizuje istniejący egzamin. Dostępne tylko dla ADMIN.
-     *
-     * @param id identyfikator egzaminu do aktualizacji
-     * @param updatedExam zaktualizowane dane egzaminu
-     * @return zaktualizowany egzamin lub 404 jeśli nie znaleziono
+     * Edytuje egzamin – tylko ADMIN.
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -90,10 +70,7 @@ public class ExamController {
     }
 
     /**
-     * Usuwa egzamin na podstawie identyfikatora. Tylko ADMIN.
-     *
-     * @param id identyfikator egzaminu do usunięcia
-     * @return 204 No Content jeśli sukces, 404 jeśli nie znaleziono
+     * Usuwa egzamin – tylko ADMIN.
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

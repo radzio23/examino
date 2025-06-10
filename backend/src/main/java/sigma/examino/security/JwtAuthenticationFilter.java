@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -26,10 +25,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        
+        // ZAWSZE czyścimy kontekst na początku żądania
+        SecurityContextHolder.clearContext();
+        
         String header = request.getHeader(AUTHORIZATION_HEADER);
         System.out.println("Authorization header: " + header);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+            // Brak tokena - przepuszczamy bez uwierzytelniania
             filterChain.doFilter(request, response);
             return;
         }
@@ -43,30 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             System.out.println("Authenticated username: " + username);
 
-            List<SimpleGrantedAuthority> authorities;
-
-            if (claims.containsKey("roles")) {
-                List<?> rawRoles = claims.get("roles", List.class);
-                List<String> roles = rawRoles.stream()
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
-
-                System.out.println("Roles from token (list): " + roles);
-
-                authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toList());
-            } else if (claims.containsKey("role")) {
-                String role = claims.get("role").toString();
-                System.out.println("Role from token (single): " + role);
-
-                authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-            } else {
-                System.out.println("No role(s) found in token.");
-                authorities = Collections.emptyList();
-            }
-
-            System.out.println("Authorities set in security context: " + authorities);
+            List<SimpleGrantedAuthority> authorities = extractAuthorities(claims);
 
             if (username != null) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -77,9 +58,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (JwtException e) {
-            System.out.println("Invalid or expired JWT token");
+            // BŁĄD KRYTYCZNY: Nie przepuszczamy żądania z nieprawidłowym tokenem!
+            System.out.println("Invalid or expired JWT token: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
+
+private List<SimpleGrantedAuthority> extractAuthorities(Claims claims) {
+    if (claims.containsKey("roles")) {
+        List<?> rawRoles = claims.get("roles", List.class);
+        List<String> roles = rawRoles.stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+        System.out.println("Roles from token (list): " + roles);
+
+        List<SimpleGrantedAuthority> authorities = roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
+        System.out.println("Extracted authorities: " + authorities);
+        return authorities;
+    } else if (claims.containsKey("role")) {
+        String role = claims.get("role").toString();
+        System.out.println("Role from token (single): " + role);
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        System.out.println("Extracted authorities: " + authorities);
+        return authorities;
+    } else {
+        System.out.println("No role(s) found in token.");
+        return Collections.emptyList();
+    }
+}
+
 }

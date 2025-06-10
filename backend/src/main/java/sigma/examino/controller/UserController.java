@@ -80,12 +80,14 @@ public class UserController {
         User user = userService.loginUserReturnUser(username, password);
         if (user != null) {
             String token = JwtUtils.generateToken(user.getUsername(), user.getRole().toString());
-            return ResponseEntity.ok(Map.of("token", token));
+            return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", user.getRole().toString() 
+            ));
         } else {
             return ResponseEntity.status(401).body(Map.of("error", "Niepoprawny login lub hasło"));
         }
     }
-
     /**
      * Endpoint <code>GET /api/auth/students</code> – pobiera listę wszystkich użytkowników z rolą STUDENT.
      *
