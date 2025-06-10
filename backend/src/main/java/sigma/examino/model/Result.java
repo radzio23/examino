@@ -8,7 +8,7 @@ import java.util.UUID;
 @Table(name = "results")
 public class Result {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     // Unikalny identyfikator wyniku typu UUID
     private UUID id;
 

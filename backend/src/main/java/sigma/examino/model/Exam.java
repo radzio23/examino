@@ -1,6 +1,11 @@
 package sigma.examino.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.UUIDJdbcType;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -8,7 +13,7 @@ import java.util.UUID;
 @Table(name = "exams")
 public class Exam {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     // Unikalny identyfikator egzaminu typu UUID
     private UUID id;
 
@@ -23,6 +28,7 @@ public class Exam {
 
     // Lista pytań przypisanych do egzaminu
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Question> questionsList;
 
     // getter id

@@ -50,8 +50,15 @@ public class ExamController {
         if (exam.getQuestionsList() != null) {
             exam.getQuestionsList().forEach(question -> question.setExam(exam));
         }
-        Exam savedExam = examRepository.save(exam);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedExam);
+        try
+        {
+            Exam savedExam = examRepository.save(exam);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedExam);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     /**

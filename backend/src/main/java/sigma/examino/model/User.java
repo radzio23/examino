@@ -7,7 +7,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     // Unikalny identyfikator użytkownika typu UUID
     private UUID id;
 

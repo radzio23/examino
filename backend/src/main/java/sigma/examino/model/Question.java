@@ -1,5 +1,6 @@
 package sigma.examino.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +9,7 @@ import java.util.UUID;
 @Table(name = "questions")
 public class Question {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     // Unikalny identyfikator pytania typu UUID
     private UUID id;
 
@@ -28,6 +29,7 @@ public class Question {
     // Egzamin, do którego należy pytanie
     @ManyToOne
     @JoinColumn(name = "exam_id")
+    @JsonBackReference
     private Exam exam;
 
     // getter id
