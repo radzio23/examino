@@ -38,7 +38,9 @@ export default function Exam() {
                 {exams.map((exam) => (
                     <div className={"exam"}>
                         <div className={"top"}>
-                            <h2 key={exam.id}>{exam.name}</h2>
+                            <Link to={`/exams/${exam.id}`} key={exam.id}>
+                              <h2>{exam.name}</h2>
+                            </Link>
                             <img alt="edit" src={"/images/edit.png"}/>
                             <img alt="delete" src={"/images/delete.png"}/>
                         </div>

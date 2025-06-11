@@ -2,9 +2,7 @@ package sigma.examino.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.descriptor.jdbc.UUIDJdbcType;
+
 
 import java.util.List;
 import java.util.UUID;

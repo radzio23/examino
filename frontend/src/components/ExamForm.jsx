@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../css/ExamForm.scss';
 
 export default function ExamForm({ onClose, onSaved }) {
   const [exam, setExam] = useState({
@@ -15,6 +15,26 @@ export default function ExamForm({ onClose, onSaved }) {
       },
     ],
   });
+
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!exam.name.trim()) newErrors.name = true;
+    if (!exam.subject.trim()) newErrors.subject = true;
+    if (!exam.durationMinutes || exam.durationMinutes < 1) newErrors.durationMinutes = true;
+
+    newErrors.questionsList = exam.questionsList.map((q) => {
+      const qErrors = {};
+      if (!q.content.trim()) qErrors.content = true;
+      qErrors.answers = q.answers.map((ans) => !ans.trim());
+      return qErrors;
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0 ||
+           !newErrors.questionsList.some(q => q.content || q.answers.some(a => a));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,75 +75,36 @@ export default function ExamForm({ onClose, onSaved }) {
     setExam({ ...exam, questionsList: updated });
   };
 
-const handleSubmit = async () => {
-  
+  const handleSubmit = async () => {
+    if (!validate()) return;
 
-  console.log("Kliknięto Zapisz");
-  const token = localStorage.getItem("token");
-  console.log("Token z localStorage:", token);
-
-  if (!token) {
-    alert("Musisz być zalogowany jako admin, aby dodać egzamin!");
-    return;
-  }
-
-  try {
-    const response = await axios.post('http://localhost:8080/api/exams', exam, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log('Zapisano egzamin', response.data);
-    if (onSaved) onSaved();
-  } catch (err) {
-    if (err.response) {
-      console.error("Błąd odpowiedzi z serwera:", err.response.status, err.response.data);
-      if (err.response.status === 403) {
-        alert("Brak uprawnień. Zaloguj się jako admin.");
-      } else {
-        alert("Błąd podczas zapisywania egzaminu: " + JSON.stringify(err.response.data));
-      }
-    } else {
-      console.error("Błąd zapytania:", err.message);
-      alert("Błąd podczas zapisywania egzaminu.");
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Musisz być zalogowany jako admin, aby dodać egzamin!');
+      return;
     }
-  }
-};
 
-
-  const handleCancel = () => {
-    if (onClose) onClose();
+    try {
+      await axios.post('http://localhost:8080/api/exams', exam, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (onSaved) onSaved();
+    } catch (err) {
+      alert('Błąd podczas zapisywania egzaminu.');
+    }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f0f4f8",
-        padding: "20px",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "30px",
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          maxWidth: "600px",
-          width: "100%",
-        }}
-      >
-        <h2 style={{ color: "#333" }}>Dodaj egzamin</h2>
+    <div className="examFormContainer">
+      <div className="examFormBox">
+        <h2 className="examFormTitle">Dodaj egzamin</h2>
 
         <input
           placeholder="Nazwa egzaminu"
           name="name"
           value={exam.name}
           onChange={handleChange}
-          style={inputStyle}
+          className={`examInput ${errors.name ? 'inputError' : ''}`}
         />
 
         <input
@@ -131,116 +112,77 @@ const handleSubmit = async () => {
           name="subject"
           value={exam.subject}
           onChange={handleChange}
-          style={inputStyle}
+          className={`examInput ${errors.subject ? 'inputError' : ''}`}
         />
 
-        <label style={{ display: "block", marginBottom: "5px", color: "#555" }}>
-          Czas trwania egzaminu (w minutach):
-        </label>
+        <label className="examLabel">Czas trwania egzaminu (w minutach):</label>
         <input
           type="number"
           name="durationMinutes"
           value={exam.durationMinutes}
           onChange={handleChange}
           min="1"
-          style={inputStyle}
+          className={`examInput ${errors.durationMinutes ? 'inputError' : ''}`}
         />
 
-        <hr style={{ marginBottom: "25px" }} />
+        <hr className="examDivider" />
 
         {exam.questionsList.map((question, qIndex) => (
-          <div key={qIndex} style={{ marginBottom: "30px" }}>
-            <h3 style={{ color: "#444" }}>
+          <div key={qIndex} className="examQuestionBlock">
+            <h3 className="examQuestionTitle">
               Pytanie {qIndex + 1}
               <button
                 onClick={() => removeQuestion(qIndex)}
-                style={{
-                  marginLeft: "10px",
-                  background: "none",
-                  border: "none",
-                  color: "red",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
+                className="examRemoveQuestionBtn"
+                type="button"
               >
                 Usuń
               </button>
             </h3>
+
             <input
               placeholder="Treść pytania"
               value={question.content}
               onChange={(e) => handleQuestionContentChange(e.target.value, qIndex)}
-              style={inputStyle}
+              className={`examInput ${
+                errors.questionsList?.[qIndex]?.content ? 'inputError' : ''
+              }`}
             />
 
             {question.answers.map((answer, aIndex) => (
-              <div key={aIndex} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+              <div key={aIndex} className="examAnswerRow">
                 <input
                   type="radio"
                   name={`correctAnswer-${qIndex}`}
                   checked={question.correctAnswerIndex === aIndex}
                   onChange={() => handleCorrectAnswerChange(qIndex, aIndex)}
-                  style={{ marginRight: "10px" }}
+                  className="examRadio"
                 />
                 <input
                   placeholder={`Odpowiedź ${aIndex + 1}`}
                   value={answer}
                   onChange={(e) => handleAnswerChange(e.target.value, qIndex, aIndex)}
-                  style={{ ...inputStyle, flexGrow: 1 }}
+                  className={`examInput examAnswerInput ${
+                    errors.questionsList?.[qIndex]?.answers?.[aIndex] ? 'inputError' : ''
+                  }`}
                 />
               </div>
             ))}
           </div>
         ))}
 
-        <button onClick={addQuestion} style={blueButton}>
+        <button onClick={addQuestion} className="btn blueBtn" type="button">
           Dodaj pytanie
         </button>
 
         <br />
-        <button onClick={handleSubmit} style={greenButton}>
+        <button onClick={handleSubmit} className="btn greenBtn" type="button">
           Zapisz
         </button>
-        <button onClick={handleCancel} style={grayButton}>
+        <button onClick={onClose} className="btn grayBtn" type="button">
           Anuluj
         </button>
       </div>
     </div>
   );
 }
-
-// Style pomocnicze
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "15px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-};
-
-const blueButton = {
-  backgroundColor: "#007bff",
-  color: "white",
-  padding: "10px 20px",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  marginBottom: "20px",
-};
-
-const greenButton = {
-  backgroundColor: "#28a745",
-  color: "white",
-  padding: "10px 20px",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  marginRight: "10px",
-};
-
-const grayButton = {
-  padding: "10px 20px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-  cursor: "pointer",
-};

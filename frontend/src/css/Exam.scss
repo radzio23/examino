@@ -76,6 +76,16 @@
       img{
         width: 30px;
       }
+        a {
+          color: black;
+          text-decoration: none;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: $main;
+            text-decoration: none;
+          }
+        }
     }
   }
 }

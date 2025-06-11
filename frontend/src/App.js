@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Users from './pages/Users';
 import ExamNew from './pages/ExamNew';
+import ExamDetails from './components/ExamDetails';
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +25,7 @@ function App() {
 
         {/*strona do tworzenia egzaminu */}
         <Route path="/exams/new" element={<ExamNew />} />
+        <Route path="/exams/:id" element={<ExamDetails />} />
       </Routes>
     </BrowserRouter>
   );
