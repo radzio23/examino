@@ -71,10 +71,18 @@ public class ExamController {
             exam.setName(updatedExam.getName());
             exam.setDurationMinutes(updatedExam.getDurationMinutes());
             exam.setSubject(updatedExam.getSubject());
+
+
+            if (updatedExam.getQuestionsList() != null) {
+                updatedExam.getQuestionsList().forEach(q -> q.setExam(exam));
+                exam.setQuestionsList(updatedExam.getQuestionsList());
+            }
+
             Exam saved = examRepository.save(exam);
             return ResponseEntity.ok(saved);
         }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+
 
     /**
      * Usuwa egzamin – tylko ADMIN.

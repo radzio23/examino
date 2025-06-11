@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/ExamForm.scss';
 
-export default function ExamForm({ onClose, onSaved }) {
+export default function ExamForm({ initialData, onClose, onSaved }) {
   const [exam, setExam] = useState({
     name: '',
     subject: '',
@@ -11,12 +11,27 @@ export default function ExamForm({ onClose, onSaved }) {
       {
         content: '',
         answers: ['', '', '', ''],
-        correctAnswerIndex: 0,
+        correctAnswer: 0,
       },
     ],
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (initialData) {
+      setExam({
+        name: initialData.name || '',
+        subject: initialData.subject || '',
+        durationMinutes: initialData.durationMinutes || 60,
+        questionsList: initialData.questionsList.map(q => ({
+          content: q.content || '',
+          answers: Array.isArray(q.answers) && q.answers.length === 4 ? q.answers : ['', '', '', ''],
+          correctAnswer: q.correctAnswer !== undefined ? Number(q.correctAnswer) : 0,
+        })),
+      });
+    }
+  }, [initialData?.id]);
 
   const validate = () => {
     const newErrors = {};
@@ -32,8 +47,13 @@ export default function ExamForm({ onClose, onSaved }) {
     });
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0 ||
-           !newErrors.questionsList.some(q => q.content || q.answers.some(a => a));
+
+    const hasErrors =
+      Object.keys(newErrors).length > 0 &&
+      (newErrors.name || newErrors.subject || newErrors.durationMinutes ||
+       newErrors.questionsList.some(q => q.content || q.answers.some(a => a)));
+
+    return !hasErrors;
   };
 
   const handleChange = (e) => {
@@ -42,37 +62,45 @@ export default function ExamForm({ onClose, onSaved }) {
   };
 
   const handleQuestionContentChange = (value, qIndex) => {
-    const updated = [...exam.questionsList];
-    updated[qIndex].content = value;
-    setExam({ ...exam, questionsList: updated });
+    setExam(prev => {
+      const updated = [...prev.questionsList];
+      updated[qIndex].content = value;
+      return { ...prev, questionsList: updated };
+    });
   };
 
   const handleAnswerChange = (value, qIndex, aIndex) => {
-    const updated = [...exam.questionsList];
-    updated[qIndex].answers[aIndex] = value;
-    setExam({ ...exam, questionsList: updated });
+    setExam(prev => {
+      const updated = [...prev.questionsList];
+      updated[qIndex].answers[aIndex] = value;
+      return { ...prev, questionsList: updated };
+    });
   };
 
   const handleCorrectAnswerChange = (qIndex, aIndex) => {
-    const updated = [...exam.questionsList];
-    updated[qIndex].correctAnswerIndex = aIndex;
-    setExam({ ...exam, questionsList: updated });
+    setExam(prev => {
+      const updated = [...prev.questionsList];
+      updated[qIndex].correctAnswer = aIndex;
+      return { ...prev, questionsList: updated };
+    });
   };
 
   const addQuestion = () => {
-    setExam((prev) => ({
+    setExam(prev => ({
       ...prev,
       questionsList: [
         ...prev.questionsList,
-        { content: '', answers: ['', '', '', ''], correctAnswerIndex: 0 },
+        { content: '', answers: ['', '', '', ''], correctAnswer: 0 },
       ],
     }));
   };
 
   const removeQuestion = (qIndex) => {
-    const updated = [...exam.questionsList];
-    updated.splice(qIndex, 1);
-    setExam({ ...exam, questionsList: updated });
+    setExam(prev => {
+      const updated = [...prev.questionsList];
+      updated.splice(qIndex, 1);
+      return { ...prev, questionsList: updated };
+    });
   };
 
   const handleSubmit = async () => {
@@ -80,24 +108,31 @@ export default function ExamForm({ onClose, onSaved }) {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Musisz być zalogowany jako admin, aby dodać egzamin!');
+      alert('Musisz być zalogowany jako admin, aby wykonać tę operację!');
       return;
     }
 
     try {
-      await axios.post('http://localhost:8080/api/exams', exam, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      if (initialData && initialData.id) {
+        await axios.put(`http://localhost:8080/api/exams/${initialData.id}`, exam, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post('http://localhost:8080/api/exams', exam, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
       if (onSaved) onSaved();
     } catch (err) {
       alert('Błąd podczas zapisywania egzaminu.');
+      console.error(err);
     }
   };
 
   return (
     <div className="examFormContainer">
       <div className="examFormBox">
-        <h2 className="examFormTitle">Dodaj egzamin</h2>
+        <h2>{initialData ? 'Edytuj egzamin' : 'Dodaj egzamin'}</h2>
 
         <input
           placeholder="Nazwa egzaminu"
@@ -144,9 +179,7 @@ export default function ExamForm({ onClose, onSaved }) {
               placeholder="Treść pytania"
               value={question.content}
               onChange={(e) => handleQuestionContentChange(e.target.value, qIndex)}
-              className={`examInput ${
-                errors.questionsList?.[qIndex]?.content ? 'inputError' : ''
-              }`}
+              className={`examInput ${errors.questionsList?.[qIndex]?.content ? 'inputError' : ''}`}
             />
 
             {question.answers.map((answer, aIndex) => (
@@ -154,7 +187,7 @@ export default function ExamForm({ onClose, onSaved }) {
                 <input
                   type="radio"
                   name={`correctAnswer-${qIndex}`}
-                  checked={question.correctAnswerIndex === aIndex}
+                  checked={question.correctAnswer === aIndex}
                   onChange={() => handleCorrectAnswerChange(qIndex, aIndex)}
                   className="examRadio"
                 />
@@ -162,9 +195,7 @@ export default function ExamForm({ onClose, onSaved }) {
                   placeholder={`Odpowiedź ${aIndex + 1}`}
                   value={answer}
                   onChange={(e) => handleAnswerChange(e.target.value, qIndex, aIndex)}
-                  className={`examInput examAnswerInput ${
-                    errors.questionsList?.[qIndex]?.answers?.[aIndex] ? 'inputError' : ''
-                  }`}
+                  className="examInput examAnswerInput"
                 />
               </div>
             ))}

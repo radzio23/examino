@@ -1,60 +1,63 @@
 @import "Main.scss";
 
-.alert{
-  background-color: rgba(0, 0, 0, 0.2);
-  width: 100vw;
-  height: 100vh;
+.alert {
   position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 
-  div{
-    text-align: center;
-    position: fixed;
-    width: 300px;
+  .modal-content {
     background-color: white;
-    z-index: 1000;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     color: $font;
     animation: fadeIn 0.2s ease-out;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    text-align: center;
 
-    h2{
-      font-size: 20px;
-      font-weight: bold;
+    h2 {
       margin-bottom: 12px;
+      font-size: 20px;
     }
 
-    p{
+    p {
       font-size: 16px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
-    button{
-      padding: 8px 20px;
-      background-color: $main;
-      color: white;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
 
-    button:hover{
-      background-color: #005039;
-      box-shadow: 0 3px 3px rgba(0,0,0,0.15);
+      button {
+        padding: 8px 20px;
+        background-color: $main;
+        color: white;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #005039;
+          box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+        }
+      }
     }
   }
 }
 
-@keyframes fadeIn{
-  from{
+@keyframes fadeIn {
+  from {
     opacity: 0;
   }
-  to{
+  to {
     opacity: 1;
   }
 }
