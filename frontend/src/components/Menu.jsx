@@ -1,17 +1,18 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
+import "../css/Menu.scss"
 
-export default function StudentMenu() {
+export default function Menu() {
   return (
     <div className="menu">
       <Link to="/">
-        <img src="/images/exam.png" alt="logo" />
-        <h1>Examino</h1>
+        <img src="/images/logo.png" alt="logo"/>
+        <h1>examino</h1>
       </Link>
       <Link to="/exams">
         <h1>Egzaminy</h1>
       </Link>
-      <Link to="/exam-history">
-        <h1>Historia Egzaminów</h1>
+      <Link to="/users">
+        <h1>Użytkownicy</h1>
       </Link>
       <Link to="/settings">
         <h1>Ustawienia</h1>

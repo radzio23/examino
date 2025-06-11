@@ -1,31 +1,41 @@
-.menu {
-  display: flex;
-  align-items: center;
-  background-color: #f0f4f8; 
-  padding: 10px 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+$main: #00674F;
+$font: #0f2830;
+
+body{
+  background-color: #f0f4f8;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Pierwszy link - logo + nazwa po lewej */
-.menu a:first-child {
-  margin-right: auto;
+/* menu na górze */
+.menu{
   display: flex;
   align-items: center;
-  text-decoration: none;
-  color: #1a73e8; /* niebieski */
-}
+  padding: 12px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  justify-content: center;
 
-.menu a:first-child img {
-  height: 40px;
-  margin-right: 10px;
-  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.1));
-}
+  /* logo i nazwa */
+  :first-child{
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: $font;
 
-.menu a:first-child h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
+    /* logo */
+    img{
+      height: 36px;
+      margin-right: 10px;
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.1));
+    }
+
+    /* nazwa */
+    h1{
+      font-size: 27px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
 }
 
 /* Linki po prawej */
