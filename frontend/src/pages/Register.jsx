@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "../css/Login.css";
+import "../css/Login.scss";
+import Alert from "../components/Alert";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setMessage] = useState("");
+  const [canGo, setGo] = useState(false);
+
+
+  useEffect(() => {
+    if (!showAlert && canGo){
+      navigate("/login");
+    }
+  }, [showAlert, canGo]);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     // Walidacja danych
     if (!username.trim() || !password.trim()) {
-      setError("Nazwa użytkownika i hasło nie mogą być puste");
+      setMessage("Podaj login i hasło!")
+      setShowAlert(true);
       return;
     }
 
@@ -32,44 +43,54 @@ export default function Register() {
       console.log("Request payload:", { username: username.trim(), password: password.trim() });
       
       if (response.ok) {
-        alert("Zarejestrowano pomyślnie. Możesz się zalogować.");
-        navigate("/login");
+        setMessage("Zarejestrowano pomyślnie! Możesz się zalogować.")
+        setShowAlert(true);
+        setGo(true);
       } else {
         const errorData = await response.json();
-        setError(errorData.error || "Nieznany błąd serwera");
-        console.error("Backend error:", errorData);
+        setMessage("Użytkownik o podanej nazwie już istnieje!");
+        setShowAlert(true);
+        console.log("Backend error:", errorData);
       }
     } catch (err) {
-      setError("Problem z połączeniem sieciowym");
-      console.error("Network error:", err);
+      setMessage("Błąd sieci. Spróbuj ponownie później.");
+      setShowAlert(true);
+      console.log("Network error:", err);
     }
   };
 
   return (
-    <div className="auth-form">
-      <h2>Rejestracja</h2>
-      {error && <div className="error-message">{error}</div>}
-      
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Nazwa użytkownika"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Hasło"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Zarejestruj się</button>
-      </form>
-      <p>
-        Masz już konto? <Link to="/login">Zaloguj się</Link>
-      </p>
+    <div>
+      {showAlert && (<Alert message={alertMessage} onClose={() => setShowAlert(false)}/>)}
+      <div className="menu">
+        <div to="/login" style={{marginRight: 0}}>
+          <img src="/images/logo.png" alt="logo"/>
+          <h1>examino</h1>
+        </div>
+      </div>
+
+      <div className="auth-form">
+        <h1>Rejestracja</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+              type="text"
+              placeholder="Nazwa użytkownika"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+          />
+          <input
+              type="password"
+              placeholder="Hasło"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+          />
+          <button type="submit">Zarejestruj</button>
+        </form>
+        <br/>
+        <p>Masz już konto? <Link to="/login">Zaloguj się</Link></p>
+      </div>
     </div>
   );
 }

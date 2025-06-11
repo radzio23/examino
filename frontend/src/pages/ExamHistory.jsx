@@ -1,7 +1,6 @@
 
 import {useEffect, useState} from "react";
-import StudentMenu from "./StudentMenu";
-import "../css/Exam.css";
+import "../css/Exam.scss";
 export default function ExamHistory() {
   const [exams, setExams] = useState([]);
 

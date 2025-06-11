@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: examino
+      POSTGRES_PASSWORD: examino123
+      POSTGRES_DB: examino_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:

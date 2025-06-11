@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Menu from "./Menu";
+import Menu from "../components/Menu";
 
 export default function Users() {
   const [students, setStudents] = useState([]);

@@ -1,22 +1,26 @@
 import {Link} from "react-router-dom";
 import "../css/Menu.scss"
+import {useEffect, useState} from "react";
 
 export default function Menu() {
+    const [role, setRole] = useState(localStorage.getItem("role") || "STUDENT");
+
+    useEffect(() => {
+        setRole(localStorage.getItem("role") || "STUDENT");
+        console.log("Aktualna rola w Dashboard:", localStorage.getItem("role"));
+    }, []);
+
   return (
     <div className="menu">
-      <Link to="/">
+      <Link to="/dashboard">
         <img src="/images/logo.png" alt="logo"/>
-        <h1>examino</h1>
+          <h1>examino</h1>
       </Link>
-      <Link to="/exams">
-        <h1>Egzaminy</h1>
-      </Link>
-      <Link to="/users">
-        <h1>Użytkownicy</h1>
-      </Link>
-      <Link to="/settings">
-        <h1>Ustawienia</h1>
-      </Link>
+      <Link to="/exams">Egzaminy</Link>
+      {role === "ADMIN" ?
+          <Link to="/users">Użytkownicy</Link> :
+          <Link to="/results">Wyniki</Link>}
+      <Link to="/settings">Ustawienia</Link>
     </div>
   );
 }

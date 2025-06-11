@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Menu from "./Menu";
-import '../css/Exam.css';
+import Menu from "../components/Menu";
+import '../css/Exam.scss';
 import { getUserRole } from "../utils/auth";
 
 export default function Exam() {
@@ -27,24 +27,26 @@ export default function Exam() {
   }, []);
 
   return (
-    <div className="exam">
-      <Menu />
-      <div className="exam-list">
-        <h2>Egzaminy:</h2>
-        <ul>
-          {exams.map((exam) => (
-            <li key={exam.id}>
-              {exam.name} - {exam.subject}
-            </li>
-          ))}
-        </ul>
-        {/* Przycisk "Dodaj egzamin" widoczny tylko dla ADMIN */}
-        {role === "ADMIN" && (
-          <Link to="/exams/new">
-            <button>Dodaj egzamin</button>
-          </Link>
-        )}
-      </div>
+    <div>
+      <Menu/>
+        <div className="exams">
+            <div className={"examsMenu"}>
+                <h1>Twoje egzaminy:</h1>
+                {role === "ADMIN" && (<Link to="/exams/new"><button>Dodaj egzamin</button></Link>)}
+            </div>
+            <div className={"examsList"}>
+                {exams.map((exam) => (
+                    <div className={"exam"}>
+                        <div className={"top"}>
+                            <h2 key={exam.id}>{exam.name}</h2>
+                            <img alt="edit" src={"/images/edit.png"}/>
+                            <img alt="delete" src={"/images/delete.png"}/>
+                        </div>
+                        <p>{exam.subject} - {exam.durationMinutes} minut</p>
+                    </div>
+                ))}
+            </div>
+        </div>
     </div>
   );
 }

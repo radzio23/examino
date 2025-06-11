@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import "./style.scss";
+import "./css/Main.scss";
 import Exam from "./pages/Exam";
 import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
@@ -17,10 +17,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/*istniejące strony */}
+        {/* Istniejące strony */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/exams" element={<Exam />} />
         <Route path="/users" element={<Users />} />
+
         {/*strona do tworzenia egzaminu */}
         <Route path="/exams/new" element={<ExamNew />} />
       </Routes>
