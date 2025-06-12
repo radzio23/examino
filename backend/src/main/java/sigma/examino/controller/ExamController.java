@@ -75,7 +75,8 @@ public class ExamController {
 
             if (updatedExam.getQuestionsList() != null) {
                 updatedExam.getQuestionsList().forEach(q -> q.setExam(exam));
-                exam.setQuestionsList(updatedExam.getQuestionsList());
+                exam.getQuestionsList().clear();
+                exam.getQuestionsList().addAll(updatedExam.getQuestionsList());
             }
 
             Exam saved = examRepository.save(exam);

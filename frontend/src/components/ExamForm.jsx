@@ -7,13 +7,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     name: '',
     subject: '',
     durationMinutes: 60,
-    questionsList: [
-      {
-        content: '',
-        answers: ['', '', '', ''],
-        correctAnswer: 0,
-      },
-    ],
+    questionsList: [],
   });
 
   const [errors, setErrors] = useState({});
@@ -25,6 +19,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
         subject: initialData.subject || '',
         durationMinutes: initialData.durationMinutes || 60,
         questionsList: initialData.questionsList.map(q => ({
+          id: q.id,
           content: q.content || '',
           answers: Array.isArray(q.answers) && q.answers.length === 4 ? q.answers : ['', '', '', ''],
           correctAnswer: q.correctAnswer !== undefined ? Number(q.correctAnswer) : 0,
@@ -99,7 +94,10 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     setExam(prev => {
       const updated = [...prev.questionsList];
       updated.splice(qIndex, 1);
-      return { ...prev, questionsList: updated };
+      return {
+        ...prev,
+        questionsList: updated
+      };
     });
   };
 

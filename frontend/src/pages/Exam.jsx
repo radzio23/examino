@@ -115,13 +115,11 @@ export default function Exam() {
                     <img
                       alt="edit"
                       src="/images/edit.png"
-                      style={{ cursor: "pointer" }}
                       onClick={() => handleEditClick(exam)}
                     />
                     <img
                       alt="delete"
                       src="/images/delete.png"
-                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         setSelectedExamId(exam.id);
                         setShowAlert(true);

@@ -1,13 +1,19 @@
 package sigma.examino.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Role;
 import sigma.examino.model.User;
+import sigma.examino.repository.ExamRepository;
+import sigma.examino.repository.UserRepository;
 import sigma.examino.security.JwtUtils;
 import sigma.examino.service.UserService;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Kontroler obsługujący endpointy związane z autoryzacją użytkowników,
@@ -23,14 +29,16 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     /**
      * Konstruktor wstrzykujący serwis użytkownika.
      *
      * @param userService serwis użytkownika
      */
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -96,5 +104,22 @@ public class UserController {
     @GetMapping("/students")
     public ResponseEntity<?> getAllStudents() {
         return ResponseEntity.ok(userService.findAllByRole(Role.STUDENT));
+    }
+
+
+    /**
+     * usuwa użytkownika o podanym ID.
+     *
+     * @param id identyfikator użytkownika do usunięcia
+     * @return odpowiedź HTTP 200 po usunięciu lub 404 jeśli nie znaleziono
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

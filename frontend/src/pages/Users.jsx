@@ -1,8 +1,37 @@
 import { useEffect, useState } from "react";
 import Menu from "../components/Menu";
+import '../css/Users.scss';
+import AlertModal from "../components/Alert";
 
 export default function Users() {
   const [students, setStudents] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
+
+  const deleteUser = (id) => {
+      const token = localStorage.getItem("token");
+      fetch(`http://localhost:8080/api/auth/${id}`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      })
+          .then((res) => {
+              if (!res.ok) throw new Error("Błąd usuwania studenta");
+              setStudents((prev) => prev.filter((s) => s.id !== id));
+              setShowAlert(false);
+          })
+          .catch((err) => {
+              console.error("Błąd:", err);
+              setShowAlert(false);
+          });
+  };
+
+  const confirmDelete = () => {
+      if (selectedStudentId) {
+          deleteUser(selectedStudentId);
+      }
+  };
 
   useEffect(() => {
     fetch("http://localhost:8080/api/auth/students")
@@ -17,74 +46,37 @@ export default function Users() {
   }, []);
 
   return (
-    <div style={pageStyle}>
-      <Menu />
-      <div style={containerStyle}>
-        <h2 style={titleStyle}>Lista studentów</h2>
-        {students.length === 0 ? (
-          <p>Brak studentów do wyświetlenia.</p>
-        ) : (
-          <ul style={listStyle}>
-            {students.map((user) => (
-              <li key={user.id} style={itemStyle}>
-                <span style={usernameStyle}>{user.username}</span> 
-                <span style={roleStyle}>({user.role})</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div>
+          <Menu />
+          <div className="container">
+              <h2 className="title">Lista studentów</h2>
+              {students.length === 0 ? (
+                  <p>Brak studentów do wyświetlenia.</p>
+              ) : (
+                  <ul className="list">
+                      {students.map((user) => (
+                          <li key={user.id} className="item">
+                              <span className="username">{user.username}</span>
+                              {/*<span className="role">({user.role})</span>*/}
+                              <img src={"images/delete.png"} alt="Usuń"
+                                onClick={() => {
+                                  setSelectedStudentId(user.id);
+                                  setShowAlert(true);
+                                }
+                              }/>
+                          </li>
+                      ))}
+                  </ul>
+              )}
+          </div>
+          {showAlert && (
+              <AlertModal
+                  message="Czy na pewno chcesz usunąć użytkownika?"
+                  onClose={() => setShowAlert(false)}
+                  onConfirm={confirmDelete}
+              />
+          )}
       </div>
-    </div>
+
   );
 }
-
-const pageStyle = {
-  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-  backgroundColor: "#f9fafb",
-  minHeight: "100vh",
-  padding: "20px",
-};
-
-const containerStyle = {
-  maxWidth: "600px",
-  margin: "40px auto",
-  backgroundColor: "white",
-  borderRadius: "8px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-  padding: "20px 30px",
-};
-
-const titleStyle = {
-  color: "#333",
-  marginBottom: "20px",
-  borderBottom: "2px solid #007bff",
-  paddingBottom: "8px",
-};
-
-const listStyle = {
-  listStyleType: "none",
-  padding: 0,
-  margin: 0,
-};
-
-const itemStyle = {
-  padding: "12px 15px",
-  marginBottom: "10px",
-  borderRadius: "6px",
-  backgroundColor: "#e9f0ff",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  transition: "background-color 0.3s ease",
-  cursor: "default",
-};
-
-const usernameStyle = {
-  fontWeight: "600",
-  color: "#222",
-};
-
-const roleStyle = {
-  fontStyle: "italic",
-  color: "#555",
-};

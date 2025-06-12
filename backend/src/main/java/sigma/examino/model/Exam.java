@@ -25,7 +25,7 @@ public class Exam {
     private String subject;
 
     // Lista pytań przypisanych do egzaminu
-    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Question> questionsList;
 
