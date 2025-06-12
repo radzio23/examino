@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Users from './pages/Users';
+import Settings from './pages/Settings';
 import ExamDetails from './components/ExamDetails';
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/dashboard" element={<Exam />} />
         <Route path="/exams" element={<Exam />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/settings" element={<Settings />} />
 
         <Route path="/exams/:id" element={<ExamDetails />} />
       </Routes>
