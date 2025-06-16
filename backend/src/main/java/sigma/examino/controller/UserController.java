@@ -1,13 +1,13 @@
 package sigma.examino.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Role;
 import sigma.examino.model.User;
-import sigma.examino.repository.ExamRepository;
+//import sigma.examino.repository.ExamRepository;
 import sigma.examino.repository.UserRepository;
 import sigma.examino.security.JwtUtils;
 import sigma.examino.service.UserService;
@@ -19,10 +19,6 @@ import java.util.UUID;
  * Kontroler obsługujący endpointy związane z autoryzacją użytkowników,
  * takie jak rejestracja, logowanie oraz pobieranie listy studentów.
  *
- * <p>Obsługuje ścieżki rozpoczynające się od <code>/api/auth</code>.</p>
- *
- * @author OpenAI
- * @version 1.0
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -42,9 +38,9 @@ public class UserController {
     }
 
     /**
-     * Endpoint <code>POST /api/auth/register</code> – rejestracja nowego użytkownika.
-     * <p>Oczekuje mapy JSON zawierającej klucze <code>username</code> i <code>password</code>.</p>
-     * <p>Nowemu użytkownikowi zawsze przypisywana jest rola STUDENT.</p>
+     * Endpoint POST /api/auth/register – rejestracja nowego użytkownika.
+     * Oczekuje mapy JSON zawierającej klucze username i password
+     * Nowemu użytkownikowi zawsze przypisywana jest rola STUDENT
      *
      * @param body mapa zawierająca dane rejestracyjne (username, password)
      * @return odpowiedź HTTP 200 po pomyślnej rejestracji lub 400 w przypadku błędu
@@ -69,9 +65,9 @@ public class UserController {
     }
 
     /**
-     * Endpoint <code>POST /api/auth/login</code> – logowanie użytkownika.
-     * <p>Oczekuje mapy JSON zawierającej <code>username</code> i <code>password</code>.</p>
-     * <p>Po pomyślnym logowaniu zwraca token JWT.</p>
+     * Endpoint POST /api/auth/login – logowanie użytkownika.
+     * Oczekuje mapy JSON zawierającej username i password
+     * Po pomyślnym logowaniu zwraca token JWT
      *
      * @param body mapa zawierająca dane logowania
      * @return odpowiedź HTTP 200 z tokenem lub 401 przy błędnych danych
@@ -97,7 +93,7 @@ public class UserController {
         }
     }
     /**
-     * Endpoint <code>GET /api/auth/students</code> – pobiera listę wszystkich użytkowników z rolą STUDENT.
+     * Endpoint GET /api/auth/student – pobiera listę wszystkich użytkowników z rolą STUDENT.
      *
      * @return lista studentów w odpowiedzi HTTP 200
      */

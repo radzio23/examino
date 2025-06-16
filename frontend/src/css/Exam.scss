@@ -1,24 +1,27 @@
 @import "Main.scss";
 
-.exams{
+.exams {
   max-width: 1240px;
   margin: 30px auto;
 
-  .examsMenu{
+  .examsMenu {
     padding-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 
-    h1{
+    h1 {
       font-size: 1.8rem;
+      flex-grow: 1;
     }
 
-    a{
+    a {
       text-decoration: none;
     }
 
-    button{
+    button {
       background-color: $main;
       color: white;
       font-size: 1rem;
@@ -30,18 +33,35 @@
       transition: background-color 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
     }
 
-    button:hover{
+    button:hover {
       background-color: #005039;
-      box-shadow: 0 3px 3px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .examSearchInput {
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+      margin-right: 20px;
+      flex-grow: 1;
+      max-width: 300px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+      &:focus {
+        border-color: $main;
+        box-shadow: 0 0 4px rgba(0, 80, 57, 0.3);
+      }
     }
   }
 
-  .examsList{
+  .examsList {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
 
-    .exam{
+    .exam {
       width: 350px;
       display: flex;
       float: left;
@@ -49,46 +69,47 @@
       padding: 30px 25px;
       background: #fff;
       border-radius: 5px;
-      box-shadow: 0 5px 5px rgba(0,0,0,0.15);
+      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
       border-top: 10px solid $main;
       border-collapse: collapse;
 
-      .top{
+      .top {
         width: 100%;
         display: flex;
         justify-content: space-between;
         gap: 10px;
 
-        :first-child{
+        :first-child {
           margin-right: auto;
         }
       }
 
-      p{
+      p {
         margin: 0;
         width: 100%;
         text-align: left;
       }
 
-      h2{
+      h2 {
         margin: 0;
         padding: 0;
       }
 
-      img{
+      img {
         width: 30px;
         cursor: pointer;
       }
-        a {
-          color: black;
-          text-decoration: none;
-          transition: color 0.3s ease;
 
-          &:hover {
-            color: $main;
-            text-decoration: none;
-          }
+      a {
+        color: black;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: $main;
+          text-decoration: none;
         }
+      }
     }
   }
 }

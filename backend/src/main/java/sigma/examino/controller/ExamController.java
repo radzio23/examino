@@ -39,7 +39,7 @@ public class ExamController {
     }
 
 
-    //============TU COS SIE PSUJE============
+  
     /**
      * Tworzy egzamin – tylko ADMIN.
      */

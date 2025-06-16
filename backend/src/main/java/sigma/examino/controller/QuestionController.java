@@ -62,7 +62,7 @@ public class QuestionController {
         return questionRepository.save(question);
     }
 
-    //===========0506==============
+
     /**
      * Edycja pytania w bazie.
      *

@@ -1,0 +1,230 @@
+$main: #00674F;
+$font: #0f2830;
+$colour: #669999;
+
+.examSolverPage {
+  padding: 40px;
+  background-color: #f0f4f8;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: $font;
+
+  .examSolverBox {
+    background: white;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .examHeader {
+    margin-bottom: 25px;
+    border-bottom: 2px solid lighten($colour, 40%);
+    padding-bottom: 15px;
+
+    h1 {
+      color: $main;
+      font-size: 2rem;
+      margin: 0 0 5px 0;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: darken($font, 20%);
+      margin: 0;
+    }
+  }
+
+  .questionBlock {
+    background: #fff;
+    border: 1px solid lighten($main, 10%);
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+
+    h3 {
+      color: $font;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      color: darken($font, 15%);
+      position: relative;
+      padding-right: 50px; // miejsce na wynik 1/1 lub 0/1
+
+      & > span {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 700;
+        font-size: 1rem;
+        color: $main;
+      }
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .answerOption {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: #fafafa;
+        border: 1px solid lighten($main, 10%); 
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.25s ease;
+
+        &:hover {
+          background-color: lighten(#8fa19d, 20%);
+        }
+
+        input[type="radio"] {
+          margin-right: 12px;
+          cursor: pointer;
+          transform: scale(1.15);
+        }
+      }
+    }
+  }
+
+  .submitBtn {
+    background-color: $main;
+    color: white;
+    border: none;
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($main, 10%);
+    }
+  }
+
+  //Wyniki egzaminu
+
+  .exam-title {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 2.4rem;
+    color: $main;
+  }
+
+  .questions-header {
+    margin-top: 30px;
+    font-size: 1.6rem;
+    border-bottom: 2px solid $main;
+    padding-bottom: 8px;
+  }
+
+  .questions-list {
+    list-style-type: none;
+    padding-left: 0;
+
+    .question-item {
+      margin-bottom: 25px;
+
+      .question-content {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        color: $font;
+        position: relative;
+        padding-right: 50px;
+
+        & > span {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          font-weight: 700;
+          font-size: 1rem;
+          color: $main;
+        }
+      }
+
+      .answers-list {
+        list-style-type: none;
+        padding-left: 20px;
+
+        .answer {
+          padding: 6px 10px;
+          margin-bottom: 6px;
+          border-radius: 4px;
+          background-color: #f0f0f0;
+          transition: background-color 0.3s ease;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: $font;
+        }
+
+        .correct {
+          background-color: #d4edda;  
+          color: #155724;           
+          font-weight: 700;
+        }
+
+        .user-wrong {
+          background-color: #f8d7da; 
+          color: #721c24;            
+          font-weight: 700;
+        }
+
+        .user-correct {
+          background-color: #d4edda;
+          color: #155724;
+          font-weight: 700;
+        }
+      }
+
+      .user-answer-feedback {
+        font-weight: 600;
+        margin-top: 8px;
+        font-size: 1rem;
+
+        &.correct-feedback {
+          color: #155724;
+        }
+        &.wrong-feedback {
+          color: #721c24;
+        }
+        &.no-answer-feedback {
+          color: $font;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  .exit-button {
+    margin-top: 30px;
+    display: block;
+    background-color: $main;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($main, 10%);
+    }
+  }
+}

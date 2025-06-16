@@ -12,6 +12,7 @@ export default function Exam() {
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [editingExam, setEditingExam] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const role = getUserRole();
 
   useEffect(() => {
@@ -98,39 +99,62 @@ export default function Exam() {
       <div className="exams">
         <div className="examsMenu">
           <h1>Twoje egzaminy:</h1>
+          <input
+            type="text"
+            placeholder="Szukaj po nazwie lub przedmiocie..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="examSearchInput"
+          />
           {role === "ADMIN" && (
             <button onClick={handleAddClick}>Dodaj egzamin</button>
           )}
         </div>
 
         <div className="examsList">
-          {exams.map((exam) => (
-            <div className="exam" key={exam.id}>
-              <div className="top">
-                <Link to={`/exams/${exam.id}`}>
-                  <h2>{exam.name}</h2>
-                </Link>
-                {role === "ADMIN" && (
-                  <>
-                    <img
-                      alt="edit"
-                      src="/images/edit.png"
-                      onClick={() => handleEditClick(exam)}
-                    />
-                    <img
-                      alt="delete"
-                      src="/images/delete.png"
-                      onClick={() => {
-                        setSelectedExamId(exam.id);
-                        setShowAlert(true);
-                      }}
-                    />
-                  </>
-                )}
+          {exams
+            .filter((exam) =>
+              exam.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              exam.subject.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((exam) => (
+              <div className="exam" key={exam.id}>
+                <div className="top">
+                  {role === "ADMIN" ? (
+                    <Link to={`/exams/${exam.id}`}>
+                      <h2>{exam.name}</h2>
+                    </Link>
+                  ) : (
+                    <h2 style={{ cursor: "default", userSelect: "none" }}>{exam.name}</h2>
+                  )}
+
+                  {role === "STUDENT" && (
+                    <Link to={`/exams/${exam.id}/solve`} className="solveExamBtn">
+                      Rozwiąż egzamin
+                    </Link>
+                  )}
+
+                  {role === "ADMIN" && (
+                    <>
+                      <img
+                        alt="edit"
+                        src="/images/edit.png"
+                        onClick={() => handleEditClick(exam)}
+                      />
+                      <img
+                        alt="delete"
+                        src="/images/delete.png"
+                        onClick={() => {
+                          setSelectedExamId(exam.id);
+                          setShowAlert(true);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+                <p>{exam.subject} - {exam.durationMinutes} minut</p>
               </div>
-              <p>{exam.subject} - {exam.durationMinutes} minut</p>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 

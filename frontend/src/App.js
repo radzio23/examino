@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Users from './pages/Users';
 import Settings from './pages/Settings';
 import ExamDetails from './components/ExamDetails';
+import ExamSolver from './components/ExamSolver';
 function App() {
   return (
     <BrowserRouter>
@@ -23,6 +24,7 @@ function App() {
         <Route path="/exams" element={<Exam />} />
         <Route path="/users" element={<Users />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/exams/:examId/solve" element={<ExamSolver />} />
 
         <Route path="/exams/:id" element={<ExamDetails />} />
       </Routes>
