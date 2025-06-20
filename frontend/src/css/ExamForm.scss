@@ -48,7 +48,6 @@
 }
 
 .examDivider {
-  margin-bottom: 25px;
   border: none;
   height: 1px;
   background-color: #ddd;
@@ -103,14 +102,15 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
-  margin-top: 10px;
-  margin-right: 10px;
   transition: background-color 0.3s ease;
+  width: 150px;
+  margin: 15px 0;
 }
 
 .blueBtn {
   background-color: #669999;
   color: white;
+  width: 100%;
 }
 .blueBtn:hover {
   background-color: darken(#669999, 10%);
@@ -134,4 +134,13 @@
 }
 .inputError {
   border-color: red !important;
+}
+
+.container1{
+  text-align: center;
+}
+
+.container2{
+  display: flex;
+  justify-content: space-between;
 }

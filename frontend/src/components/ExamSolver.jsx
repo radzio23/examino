@@ -119,7 +119,6 @@ export default function ExamSolver() {
             <p>
               Wynik: {submitResult.score.toFixed(2)}% ({submitResult.correctCount}/{submitResult.total})
             </p>
-
             <h3 className="questions-header">Pytania:</h3>
             <ul className="questions-list">
               {submitResult.details.map((detail) => {

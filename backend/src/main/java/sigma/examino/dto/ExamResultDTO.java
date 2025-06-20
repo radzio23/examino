@@ -1,5 +1,8 @@
 package sigma.examino.dto;
 
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -10,6 +13,21 @@ public class ExamResultDTO {
      * Wynik procentowy egzaminu.
      */
     private float score;
+
+    /**
+     * Czas wykonania egzaminu.
+     */
+    private LocalDateTime timestamp;
+
+    /**
+     * Nazwa egzaminu.
+     */
+    private String examName;
+
+    /**
+     * Nazwa egzaminu.
+     */
+    private String subject;
 
     /**
      * Liczba poprawnych odpowiedzi.
@@ -40,6 +58,54 @@ public class ExamResultDTO {
      */
     public void setScore(float score) {
         this.score = score;
+    }
+
+    /**
+     * Pobiera czas wykonania egzaminu.
+     * @return czas wykonania egzaminu
+     */
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * Ustawia czas wykonania egzaminu.
+     * @param timestamp czas wykonania egzaminu
+     */
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Pobiera nazwe egzaminu.
+     * @return nazwa egzaminu
+     */
+    public String getExamName() {
+        return examName;
+    }
+
+    /**
+     * Ustawia nazwe egzaminu.
+     * @param examName nazwa egzaminu
+     */
+    public void setExamName(String examName) {
+        this.examName = examName;
+    }
+
+    /**
+     * Pobiera nazwe przedmiotu.
+     * @return nazwa przedmiotu
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * Ustawia przedmiot.
+     * @param subject nazwa przedmiotu
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     /**

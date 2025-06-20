@@ -199,18 +199,20 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
             ))}
           </div>
         ))}
-
-        <button onClick={addQuestion} className="btn blueBtn" type="button">
-          Dodaj pytanie
-        </button>
-
-        <br />
-        <button onClick={handleSubmit} className="btn greenBtn" type="button">
-          Zapisz
-        </button>
-        <button onClick={onClose} className="btn grayBtn" type="button">
-          Anuluj
-        </button>
+        <div className="container1">
+          <button onClick={addQuestion} className="btn blueBtn" type="button">
+            Dodaj pytanie
+          </button>
+        </div>
+        <hr className="examDivider" />
+        <div className="container2">
+          <button onClick={handleSubmit} className="btn greenBtn" type="button">
+            Zapisz
+          </button>
+          <button onClick={onClose} className="btn grayBtn" type="button">
+            Anuluj
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Menu from "../components/Menu";
-import '../css/Exam.scss';
+import { Link, useNavigate } from "react-router-dom";
 import { getUserRole } from "../utils/auth";
+import '../css/Exam.scss';
+import Menu from "../components/Menu";
 import AlertModal from "../components/Alert";
 import ExamForm from "../components/ExamForm";
 
@@ -59,7 +59,8 @@ export default function Exam() {
     }
   };
 
-  const handleEditClick = (exam) => {
+  const handleEditClick = (exam, e) => {
+    e.stopPropagation();
     setEditingExam(exam);
     setShowForm(true);
   };
@@ -78,6 +79,8 @@ export default function Exam() {
     fetchExams();
     handleCloseForm();
   };
+
+  const navigate = useNavigate();
 
   if (showForm) {
     return (
@@ -110,6 +113,7 @@ export default function Exam() {
             <button onClick={handleAddClick}>Dodaj egzamin</button>
           )}
         </div>
+        <hr/><br/>
 
         <div className="examsList">
           {exams
@@ -118,33 +122,28 @@ export default function Exam() {
               exam.subject.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((exam) => (
-              <div className="exam" key={exam.id}>
+              <div className="exam" key={exam.id} onClick={() => {
+                if (role === 'ADMIN') {
+                  navigate(`/exams/${exam.id}`);
+                } else {
+                  navigate(`/exams/${exam.id}/solve`);
+                }
+              }}>
                 <div className="top">
-                  {role === "ADMIN" ? (
-                    <Link to={`/exams/${exam.id}`}>
-                      <h2>{exam.name}</h2>
-                    </Link>
-                  ) : (
-                    <h2 style={{ cursor: "default", userSelect: "none" }}>{exam.name}</h2>
-                  )}
-
-                  {role === "STUDENT" && (
-                    <Link to={`/exams/${exam.id}/solve`} className="solveExamBtn">
-                      Rozwiąż egzamin
-                    </Link>
-                  )}
+                    <h2>{exam.name}</h2>
 
                   {role === "ADMIN" && (
                     <>
                       <img
                         alt="edit"
                         src="/images/edit.png"
-                        onClick={() => handleEditClick(exam)}
+                        onClick={(e) => handleEditClick(exam, e)}
                       />
                       <img
                         alt="delete"
                         src="/images/delete.png"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedExamId(exam.id);
                           setShowAlert(true);
                         }}
@@ -152,7 +151,8 @@ export default function Exam() {
                     </>
                   )}
                 </div>
-                <p>{exam.subject} - {exam.durationMinutes} minut</p>
+                <p>{exam.subject}</p>
+                <p>{exam.durationMinutes} minut</p>
               </div>
             ))}
         </div>

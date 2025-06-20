@@ -18,6 +18,7 @@ public class Result {
 
     // Egzamin, do którego odnosi się wynik
     @ManyToOne
+    @JoinColumn(name = "exam_id")
     private Exam exam;
 
     // Wynik w procentach (np. 85.5)

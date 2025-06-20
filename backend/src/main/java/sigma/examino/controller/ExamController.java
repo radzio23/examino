@@ -7,8 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sigma.examino.model.Exam;
+import sigma.examino.model.User;
 import sigma.examino.repository.ExamRepository;
+import sigma.examino.repository.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,14 +21,20 @@ public class ExamController {
 
     @Autowired
     private ExamRepository examRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
-     * Zwraca listę wszystkich egzaminów (widoczne dla zalogowanych użytkowników).
+     * Zwraca listę wszystkich nierozwiązanych egzaminów (widoczne dla zalogowanych użytkowników).
      */
-    @GetMapping
-    @PreAuthorize("isAuthenticated()")
-    public List<Exam> getAllExams() {
-        return examRepository.findAll();
+    @GetMapping()
+//    @PreAuthorize("isAuthenticated()")
+    public List<Exam> getAllExams(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Użytkownik nie istnieje"));
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + examRepository.findExamsNotTakenByUser(user.getId()));
+
+        return examRepository.findExamsNotTakenByUser(user.getId());
     }
 
     /**
