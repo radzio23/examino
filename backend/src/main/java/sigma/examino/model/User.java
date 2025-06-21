@@ -3,59 +3,100 @@ package sigma.examino.model;
 import jakarta.persistence.*;
 import java.util.UUID;
 
+/**
+ * Encja reprezentująca użytkownika systemu.
+ * Użytkownik posiada unikalny identyfikator, nazwę użytkownika, hasło oraz rolę (STUDENT lub ADMIN).
+ */
 @Entity
 @Table(name = "users")
 public class User {
+
+    /**
+     * Unikalny identyfikator użytkownika typu UUID.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    // Unikalny identyfikator użytkownika typu UUID
     private UUID id;
 
+    /**
+     * Nazwa użytkownika (login), unikalna w systemie.
+     */
     @Column(nullable = false, unique = true)
-    // Nazwa użytkownika
     private String username;
 
+    /**
+     * Hasło użytkownika, przechowywane w formie zaszyfrowanej.
+     */
     @Column(nullable = false)
-    // Hasło użytkownika, zaszyfrowane
     private String password;
 
+    /**
+     * Rola użytkownika – STUDENT lub ADMIN.
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    // Rola użytkownika, STUDENT lub ADMIN
     private Role role;
 
-    // getter id
+    /**
+     * Zwraca identyfikator użytkownika.
+     * @return UUID użytkownika
+     */
     public UUID getId() {
         return id;
     }
-    // setter id
+
+    /**
+     * Ustawia identyfikator użytkownika.
+     * @param id UUID użytkownika
+     */
     public void setId(UUID id) {
         this.id = id;
     }
 
-    // getter nazwy użytkownika
+    /**
+     * Zwraca nazwę użytkownika.
+     * @return login użytkownika
+     */
     public String getUsername() {
         return username;
     }
-    // setter nazwy użytkownika
+
+    /**
+     * Ustawia nazwę użytkownika.
+     * @param username login użytkownika
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    // getter hasła
+    /**
+     * Zwraca hasło użytkownika (zaszyfrowane).
+     * @return zaszyfrowane hasło
+     */
     public String getPassword() {
         return password;
     }
-    // setter hasła
+
+    /**
+     * Ustawia zaszyfrowane hasło użytkownika.
+     * @param password zaszyfrowane hasło
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    // getter roli
+    /**
+     * Zwraca rolę użytkownika.
+     * @return rola (STUDENT lub ADMIN)
+     */
     public Role getRole() {
         return role;
     }
-    // setter roli
+
+    /**
+     * Ustawia rolę użytkownika.
+     * @param role rola (STUDENT lub ADMIN)
+     */
     public void setRole(Role role) {
         this.role = role;
     }

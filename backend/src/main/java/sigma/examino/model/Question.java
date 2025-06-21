@@ -5,83 +5,143 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Encja reprezentująca pojedyncze pytanie egzaminacyjne.
+ * Zawiera treść pytania, listę możliwych odpowiedzi, poprawną odpowiedź
+ * oraz informację o przypisanym egzaminie i przedmiocie.
+ */
 @Entity
 @Table(name = "questions")
 public class Question {
+
+    /**
+     * Unikalny identyfikator pytania typu UUID.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    // Unikalny identyfikator pytania typu UUID
     private UUID id;
 
-    // Treść pytania
+    /**
+     * Treść pytania.
+     */
     private String content;
 
-    // Lista możliwych odpowiedzi
+    /**
+     * Lista możliwych odpowiedzi.
+     */
     @ElementCollection
     private List<String> answers;
 
-    // Indeks poprawnej odpowiedzi (np. 0, 1, 2, 3)
+    /**
+     * Indeks poprawnej odpowiedzi
+     */
     private int correctAnswer;
 
-    // Przedmiot, którego dotyczy pytanie
+    /**
+     * Przedmiot, którego dotyczy pytanie.
+     */
     private String subject;
 
-    // Egzamin, do którego należy pytanie
+    /**
+     * Egzamin, do którego przypisane jest to pytanie.
+     */
     @ManyToOne
     @JoinColumn(name = "exam_id")
     @JsonBackReference
     private Exam exam;
 
-    // getter id
+    /**
+     * Zwraca identyfikator pytania.
+     * @return UUID pytania
+     */
     public UUID getId() {
         return id;
     }
-    // setter id
+
+    /**
+     * Ustawia identyfikator pytania.
+     * @param id UUID pytania
+     */
     public void setId(UUID id) {
         this.id = id;
     }
 
-    // getter treści pytania
+    /**
+     * Zwraca treść pytania.
+     * @return treść pytania
+     */
     public String getContent() {
         return content;
     }
-    // setter treści pytania
+
+    /**
+     * Ustawia treść pytania.
+     * @param content treść pytania
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
-    // getter listy odpowiedzi
+    /**
+     * Zwraca listę możliwych odpowiedzi.
+     * @return lista odpowiedzi
+     */
     public List<String> getAnswers() {
         return answers;
     }
-    // setter listy odpowiedzi
+
+    /**
+     * Ustawia listę możliwych odpowiedzi.
+     * @param answers lista odpowiedzi
+     */
     public void setAnswers(List<String> answers) {
         this.answers = answers;
     }
 
-    // getter indeksu poprawnej odpowiedzi
+    /**
+     * Zwraca indeks poprawnej odpowiedzi.
+     * @return indeks odpowiedzi
+     */
     public int getCorrectAnswer() {
         return correctAnswer;
     }
-    // setter indeksu poprawnej odpowiedzi
+
+    /**
+     * Ustawia indeks poprawnej odpowiedzi.
+     * @param correctAnswer indeks odpowiedzi
+     */
     public void setCorrectAnswer(int correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
-    // getter przedmiotu pytania
+    /**
+     * Zwraca nazwę przedmiotu, którego dotyczy pytanie.
+     * @return nazwa przedmiotu
+     */
     public String getSubject() {
         return subject;
     }
-    // setter przedmiotu pytania
+
+    /**
+     * Ustawia nazwę przedmiotu pytania.
+     * @param subject nazwa przedmiotu
+     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
 
-    // getter egzaminu, do którego należy pytanie
+    /**
+     * Zwraca egzamin, do którego należy pytanie.
+     * @return egzamin
+     */
     public Exam getExam() {
         return exam;
     }
-    // setter egzaminu, do którego należy pytanie
+
+    /**
+     * Ustawia egzamin, do którego należy pytanie.
+     * @param exam egzamin
+     */
     public void setExam(Exam exam) {
         this.exam = exam;
     }

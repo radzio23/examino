@@ -17,6 +17,7 @@ import java.util.*;
 
 /**
  * Kontroler obsługujący przesyłanie rozwiązań egzaminów przez użytkowników.
+ * Umożliwia ocenę odpowiedzi i zapisanie wyniku w bazie danych.
  */
 @RestController
 @RequestMapping("/api/submit")
@@ -35,11 +36,12 @@ public class ExamSubmissionController {
     private UserRepository userRepository;
 
     /**
-     * Endpoint do przesłania rozwiązanego egzaminu.
+     * Endpoint do przesłania rozwiązanego egzaminu przez użytkownika.
+     * Sprawdza poprawność odpowiedzi, oblicza wynik i zapisuje go w bazie.
      *
-     * @param submission Obiekt zawierający ID egzaminu oraz odpowiedzi użytkownika.
-     * @param principal  Obiekt reprezentujący aktualnie zalogowanego użytkownika.
-     * @return Obiekt DTO z wynikiem egzaminu lub informacją o błędzie.
+     * @param submission obiekt zawierający ID egzaminu oraz mapę odpowiedzi użytkownika
+     * @param principal obiekt reprezentujący aktualnie zalogowanego użytkownika
+     * @return obiekt DTO z wynikiem egzaminu lub kod błędu w przypadku niepowodzenia
      */
     @PostMapping
     @PreAuthorize("isAuthenticated()")

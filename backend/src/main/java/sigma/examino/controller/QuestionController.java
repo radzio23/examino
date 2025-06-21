@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Kontroler REST odpowiedzialny za operacje CRUD na pytaniach egzaminacyjnych.
+ * Udostępnia endpointy do pobierania, tworzenia, edytowania i usuwania pytań.
+ */
 @RestController
 @RequestMapping("/api/questions")
 public class QuestionController {
@@ -19,9 +23,9 @@ public class QuestionController {
     private QuestionRepository questionRepository;
 
     /**
-     * Zwraca listę wszystkich pytań.
+     * Zwraca listę wszystkich pytań w systemie.
      *
-     * @return lista pytań
+     * @return lista wszystkich pytań
      */
     @GetMapping
     public List<Question> getAllQuestions() {
@@ -29,10 +33,10 @@ public class QuestionController {
     }
 
     /**
-     * Zwraca pytania danego egzaminu.
+     * Zwraca listę pytań przypisanych do danego egzaminu.
      *
-     * @param examId id egzaminu
-     * @return pytania z danego egzaminu
+     * @param examId identyfikator egzaminu
+     * @return lista pytań należących do egzaminu
      */
     @GetMapping("/exam/{examId}")
     public List<Question> getQuestionsByExam(@PathVariable UUID examId) {
@@ -40,10 +44,10 @@ public class QuestionController {
     }
 
     /**
-     * Zwraca pytanie o danum id.
+     * Zwraca pytanie o podanym identyfikatorze.
      *
-     * @param examId id pytania
-     * @return jeśli pytanie istnieje to je zwraca, jeśli nie kod 404
+     * @param id identyfikator pytania
+     * @return pytanie, jeśli istnieje; w przeciwnym razie kod 404
      */
     @GetMapping("/{id}")
     public ResponseEntity<Question> getQuestionById(@PathVariable UUID id) {
@@ -52,23 +56,22 @@ public class QuestionController {
     }
 
     /**
-     * Zapis pytania do bazy.
+     * Tworzy nowe pytanie i zapisuje je w bazie danych.
      *
-     * @param exam pytanie (konwersja z JSON)
-     * @return informacja o wyniku zapisu
+     * @param question obiekt pytania do zapisania (konwertowany z JSON)
+     * @return utworzony obiekt pytania
      */
     @PostMapping
     public Question createQuestion(@RequestBody Question question) {
         return questionRepository.save(question);
     }
 
-
     /**
-     * Edycja pytania w bazie.
+     * Aktualizuje istniejące pytanie.
      *
-     * @param id id z URL-a
-     * @param updatedQuestion pytanie (konwersja z JSON)
-     * @return informacja o wyniku edycji lub wyjątek
+     * @param id identyfikator pytania z URL
+     * @param updatedQuestion nowe dane pytania (z JSON-a)
+     * @return zaktualizowane pytanie lub kod 404, jeśli nie znaleziono
      */
     @PutMapping("/{id}")
     public ResponseEntity<Question> updateQuestion(@PathVariable UUID id, @Valid @RequestBody Question updatedQuestion) {
@@ -76,8 +79,8 @@ public class QuestionController {
                 .map(existingQuestion -> {
                     existingQuestion.setContent(updatedQuestion.getContent());
                     existingQuestion.setExam(updatedQuestion.getExam());
-                    existingQuestion.setAnswers(updatedQuestion.getAnswers()); // jeśli masz listę odpowiedzi
-                    existingQuestion.setCorrectAnswer(updatedQuestion.getCorrectAnswer()); // jeśli masz pole poprawnej odpowiedzi
+                    existingQuestion.setAnswers(updatedQuestion.getAnswers());
+                    existingQuestion.setCorrectAnswer(updatedQuestion.getCorrectAnswer());
                     Question saved = questionRepository.save(existingQuestion);
                     return ResponseEntity.ok(saved);
                 })
@@ -85,10 +88,10 @@ public class QuestionController {
     }
 
     /**
-     * Usuwanie pytania w bazy.
+     * Usuwa pytanie o podanym identyfikatorze.
      *
-     * @param id id z URL-a
-     * @return odpowiedź 204 lub 404 gdy pytanie nie istnieje
+     * @param id identyfikator pytania
+     * @return odpowiedź 204 jeśli usunięto, lub 404 jeśli pytanie nie istnieje
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuestion(@PathVariable UUID id) {

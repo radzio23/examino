@@ -4,70 +4,120 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Encja reprezentująca wynik egzaminu uzyskany przez użytkownika.
+ * Zawiera odniesienie do użytkownika i egzaminu, uzyskany wynik oraz datę ukończenia.
+ */
 @Entity
 @Table(name = "results")
 public class Result {
+
+    /**
+     * Unikalny identyfikator wyniku typu UUID.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    // Unikalny identyfikator wyniku typu UUID
     private UUID id;
 
-    // Użytkownik, który uzyskał wynik
+    /**
+     * Użytkownik, który uzyskał ten wynik.
+     */
     @ManyToOne
     private User user;
 
-    // Egzamin, do którego odnosi się wynik
+    /**
+     * Egzamin, którego dotyczy wynik.
+     */
     @ManyToOne
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
-    // Wynik w procentach (np. 85.5)
+    /**
+     * Wynik w procentach (np. 85.5).
+     */
     private float score;
 
-    // Data i czas ukończenia egzaminu (ISO 8601)
+    /**
+     * Data i czas ukończenia egzaminu
+     */
     private LocalDateTime timestamp;
 
-    // getter id
+    /**
+     * Zwraca identyfikator wyniku.
+     * @return UUID wyniku
+     */
     public UUID getId() {
         return id;
     }
-    // setter id
+
+    /**
+     * Ustawia identyfikator wyniku.
+     * @param id UUID wyniku
+     */
     public void setId(UUID id) {
         this.id = id;
     }
 
-    // getter użytkownika
+    /**
+     * Zwraca użytkownika powiązanego z wynikiem.
+     * @return użytkownik
+     */
     public User getUser() {
         return user;
     }
-    // setter użytkownika
+
+    /**
+     * Ustawia użytkownika powiązanego z wynikiem.
+     * @param user użytkownik
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
-    // getter egzaminu
+    /**
+     * Zwraca egzamin, którego dotyczy wynik.
+     * @return egzamin
+     */
     public Exam getExam() {
         return exam;
     }
-    // setter egzaminu
+
+    /**
+     * Ustawia egzamin, którego dotyczy wynik.
+     * @param exam egzamin
+     */
     public void setExam(Exam exam) {
         this.exam = exam;
     }
 
-    // getter wyniku w procentach
+    /**
+     * Zwraca wynik w procentach.
+     * @return wynik egzaminu
+     */
     public float getScore() {
         return score;
     }
-    // setter wyniku w procentach
+
+    /**
+     * Ustawia wynik w procentach.
+     * @param score wynik egzaminu
+     */
     public void setScore(float score) {
         this.score = score;
     }
 
-    // getter daty i czasu ukończenia egzaminu
+    /**
+     * Zwraca datę i czas ukończenia egzaminu.
+     * @return znacznik czasu
+     */
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-    // setter daty i czasu ukończenia egzaminu
+
+    /**
+     * Ustawia datę i czas ukończenia egzaminu.
+     * @param timestamp znacznik czasu
+     */
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }

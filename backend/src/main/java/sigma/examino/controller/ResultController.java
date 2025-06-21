@@ -17,6 +17,10 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Kontroler REST odpowiedzialny za pobieranie wyników egzaminów.
+ * Umożliwia użytkownikowi uzyskanie historii własnych wyników.
+ */
 @RestController
 @RequestMapping("/api/results")
 public class ResultController {
@@ -28,7 +32,10 @@ public class ResultController {
     private UserRepository userRepository;
 
     /**
-     * Pobiera listę wyników egzaminów dla zalogowanego użytkownika.
+     * Zwraca listę wyników egzaminów dla aktualnie zalogowanego użytkownika.
+     *
+     * @param principal obiekt reprezentujący bieżącego użytkownika
+     * @return lista wyników w postaci DTO
      */
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")

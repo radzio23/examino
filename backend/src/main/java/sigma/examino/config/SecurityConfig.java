@@ -30,19 +30,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-           
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/public/**", "/api/auth/**", "/api/questions/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/exams/**").authenticated()
-            .requestMatchers("/api/exams/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        )
-            .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/**", "/api/auth/**", "/api/questions/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/exams/**").authenticated()
+                        .requestMatchers("/api/exams/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

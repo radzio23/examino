@@ -39,7 +39,7 @@ public class UserService {
      *
      * @param username nazwa użytkownika
      * @param password hasło użytkownika w postaci plaintext
-     * @param role     rola użytkownika (np. STUDENT, ADMIN)
+     * @param role     rola użytkownika (STUDENT, ADMIN)
      * @return zapisany użytkownik (obiekt {@link User})
      * @throws RuntimeException jeśli użytkownik o podanej nazwie już istnieje
      */
