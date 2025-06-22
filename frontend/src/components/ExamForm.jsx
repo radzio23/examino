@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/ExamForm.scss';
 
+/**
+ * Komponent formularza egzaminu służący do tworzenia i edycji egzaminów.
+ *
+ * Umożliwia dodawanie pytań, odpowiedzi, wybór poprawnych odpowiedzi
+ * oraz walidację pól. Obsługuje zapis danych do backendu.
+ *
+ * @component
+ * @param {object} props
+ * @param {object} [props.initialData] - Dane egzaminu do edycji (jeśli edytujemy)
+ * @param {function} props.onClose - Funkcja zamykająca formularz
+ * @param {function} props.onSaved - Callback po poprawnym zapisaniu
+ * @returns {JSX.Element}
+ */
 export default function ExamForm({ initialData, onClose, onSaved }) {
   const [exam, setExam] = useState({
     name: '',
@@ -12,6 +25,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
 
   const [errors, setErrors] = useState({});
 
+  // Wczytaj dane początkowe (jeśli edytujemy)
   useEffect(() => {
     if (initialData) {
       setExam({
@@ -28,6 +42,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     }
   }, [initialData?.id]);
 
+  // Walidacja danych formularza
   const validate = () => {
     const newErrors = {};
     if (!exam.name.trim()) newErrors.name = true;
@@ -44,18 +59,20 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     setErrors(newErrors);
 
     const hasErrors =
-      Object.keys(newErrors).length > 0 &&
-      (newErrors.name || newErrors.subject || newErrors.durationMinutes ||
-       newErrors.questionsList.some(q => q.content || q.answers.some(a => a)));
+        Object.keys(newErrors).length > 0 &&
+        (newErrors.name || newErrors.subject || newErrors.durationMinutes ||
+            newErrors.questionsList.some(q => q.content || q.answers.some(a => a)));
 
     return !hasErrors;
   };
 
+  // Zmiana danych głównych egzaminu
   const handleChange = (e) => {
     const { name, value } = e.target;
     setExam((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Zmiana treści pytania
   const handleQuestionContentChange = (value, qIndex) => {
     setExam(prev => {
       const updated = [...prev.questionsList];
@@ -64,6 +81,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     });
   };
 
+  // Zmiana odpowiedzi
   const handleAnswerChange = (value, qIndex, aIndex) => {
     setExam(prev => {
       const updated = [...prev.questionsList];
@@ -72,6 +90,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     });
   };
 
+  // Wybór poprawnej odpowiedzi
   const handleCorrectAnswerChange = (qIndex, aIndex) => {
     setExam(prev => {
       const updated = [...prev.questionsList];
@@ -80,6 +99,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     });
   };
 
+  // Dodanie nowego pytania
   const addQuestion = () => {
     setExam(prev => ({
       ...prev,
@@ -90,6 +110,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     }));
   };
 
+  // Usunięcie pytania
   const removeQuestion = (qIndex) => {
     setExam(prev => {
       const updated = [...prev.questionsList];
@@ -101,6 +122,7 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     });
   };
 
+  // Obsługa zapisu formularza
   const handleSubmit = async () => {
     if (!validate()) return;
 
@@ -127,93 +149,97 @@ export default function ExamForm({ initialData, onClose, onSaved }) {
     }
   };
 
+  // JSX formularza
   return (
-    <div className="examFormContainer">
-      <div className="examFormBox">
-        <h2>{initialData ? 'Edytuj egzamin' : 'Dodaj egzamin'}</h2>
+      <div className="examFormContainer">
+        <div className="examFormBox">
+          <h2>{initialData ? 'Edytuj egzamin' : 'Dodaj egzamin'}</h2>
 
-        <input
-          placeholder="Nazwa egzaminu"
-          name="name"
-          value={exam.name}
-          onChange={handleChange}
-          className={`examInput ${errors.name ? 'inputError' : ''}`}
-        />
+          <input
+              placeholder="Nazwa egzaminu"
+              name="name"
+              value={exam.name}
+              onChange={handleChange}
+              className={`examInput ${errors.name ? 'inputError' : ''}`}
+          />
 
-        <input
-          placeholder="Przedmiot"
-          name="subject"
-          value={exam.subject}
-          onChange={handleChange}
-          className={`examInput ${errors.subject ? 'inputError' : ''}`}
-        />
+          <input
+              placeholder="Przedmiot"
+              name="subject"
+              value={exam.subject}
+              onChange={handleChange}
+              className={`examInput ${errors.subject ? 'inputError' : ''}`}
+          />
 
-        <label className="examLabel">Czas trwania egzaminu (w minutach):</label>
-        <input
-          type="number"
-          name="durationMinutes"
-          value={exam.durationMinutes}
-          onChange={handleChange}
-          min="1"
-          className={`examInput ${errors.durationMinutes ? 'inputError' : ''}`}
-        />
+          <label className="examLabel">Czas trwania egzaminu (w minutach):</label>
+          <input
+              type="number"
+              name="durationMinutes"
+              value={exam.durationMinutes}
+              onChange={handleChange}
+              min="1"
+              className={`examInput ${errors.durationMinutes ? 'inputError' : ''}`}
+          />
 
-        <hr className="examDivider" />
+          <hr className="examDivider" />
 
-        {exam.questionsList.map((question, qIndex) => (
-          <div key={qIndex} className="examQuestionBlock">
-            <h3 className="examQuestionTitle">
-              Pytanie {qIndex + 1}
-              <button
-                onClick={() => removeQuestion(qIndex)}
-                className="examRemoveQuestionBtn"
-                type="button"
-              >
-                Usuń
-              </button>
-            </h3>
+          {exam.questionsList.map((question, qIndex) => (
+              <div key={qIndex} className="examQuestionBlock">
+                <h3 className="examQuestionTitle">
+                  Pytanie {qIndex + 1}
+                  <button
+                      onClick={() => removeQuestion(qIndex)}
+                      className="examRemoveQuestionBtn"
+                      type="button"
+                  >
+                    Usuń
+                  </button>
+                </h3>
 
-            <input
-              placeholder="Treść pytania"
-              value={question.content}
-              onChange={(e) => handleQuestionContentChange(e.target.value, qIndex)}
-              className={`examInput ${errors.questionsList?.[qIndex]?.content ? 'inputError' : ''}`}
-            />
-
-            {question.answers.map((answer, aIndex) => (
-              <div key={aIndex} className="examAnswerRow">
                 <input
-                  type="radio"
-                  name={`correctAnswer-${qIndex}`}
-                  checked={question.correctAnswer === aIndex}
-                  onChange={() => handleCorrectAnswerChange(qIndex, aIndex)}
-                  className="examRadio"
+                    placeholder="Treść pytania"
+                    value={question.content}
+                    onChange={(e) => handleQuestionContentChange(e.target.value, qIndex)}
+                    className={`examInput ${errors.questionsList?.[qIndex]?.content ? 'inputError' : ''}`}
                 />
-                <input
-                  placeholder={`Odpowiedź ${aIndex + 1}`}
-                  value={answer}
-                  onChange={(e) => handleAnswerChange(e.target.value, qIndex, aIndex)}
-                  className="examInput examAnswerInput"
-                />
+
+                {question.answers.map((answer, aIndex) => (
+                    <div key={aIndex} className="examAnswerRow">
+                      <input
+                          type="radio"
+                          name={`correctAnswer-${qIndex}`}
+                          checked={question.correctAnswer === aIndex}
+                          onChange={() => handleCorrectAnswerChange(qIndex, aIndex)}
+                          className="examRadio"
+                      />
+                      <input
+                          placeholder={`Odpowiedź ${aIndex + 1}`}
+                          value={answer}
+                          onChange={(e) => handleAnswerChange(e.target.value, qIndex, aIndex)}
+                          className="examInput examAnswerInput"
+                      />
+                    </div>
+                ))}
               </div>
-            ))}
+          ))}
+
+          <div className="container1">
+            <button onClick={addQuestion} className="btn blueBtn" type="button">
+              Dodaj pytanie
+            </button>
           </div>
-        ))}
-        <div className="container1">
-          <button onClick={addQuestion} className="btn blueBtn" type="button">
-            Dodaj pytanie
-          </button>
-        </div>
-        <hr className="examDivider" />
-        <div className="container2">
-          <button onClick={handleSubmit} className="btn greenBtn" type="button">
-            Zapisz
-          </button>
-          <button onClick={onClose} className="btn grayBtn" type="button">
-            Anuluj
-          </button>
+
+          <hr className="examDivider" />
+
+          <div className="container2">
+            <button onClick={handleSubmit} className="btn greenBtn" type="button">
+              Zapisz
+            </button>
+            <button onClick={onClose} className="btn grayBtn" type="button">
+              Anuluj
+            </button>
+          </div>
         </div>
       </div>
-    </div>
   );
 }

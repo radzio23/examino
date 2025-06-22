@@ -7,28 +7,37 @@ import Users from './pages/Users';
 import ExamDetails from './components/ExamDetails';
 import ExamSolver from './components/ExamSolver';
 import Results from './pages/Results';
+
+/**
+ * Główny komponent aplikacji definiujący routing pomiędzy stronami.
+ * Korzysta z React Router do zarządzania nawigacją między widokami.
+ *
+ * @component
+ * @returns {JSX.Element} Struktura routingu aplikacji
+ */
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Domyślnie strona logowania */}
-        <Route path="/" element={<Navigate to="/login" />} />
-s
-        {/* Logowanie i rejestracja */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* Przekierowanie domyślne na stronę logowania */}
+                <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Istniejące strony */}
-        <Route path="/dashboard" element={<Exam />} />
-        <Route path="/exams" element={<Exam />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/exams/:examId/solve" element={<ExamSolver />} />
-        <Route path="/results" element={<Results />} />
+                {/* Strony logowania i rejestracji */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-        <Route path="/exams/:id" element={<ExamDetails />} />
-      </Routes>
-    </BrowserRouter>
-  );
+                {/* Główne strony aplikacji */}
+                <Route path="/dashboard" element={<Exam />} />
+                <Route path="/exams" element={<Exam />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/exams/:examId/solve" element={<ExamSolver />} />
+                <Route path="/results" element={<Results />} />
+
+                {/* Szczegóły egzaminu */}
+                <Route path="/exams/:id" element={<ExamDetails />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
